@@ -1,9 +1,9 @@
 package com.dvdfu.gijam.handlers;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Input {
-	public static Vector2 mouse;
+	public static Vector3 mouse;
 	public static boolean mouseClick;
 	private static boolean mouseClickPrev;
 	public static boolean[] keys;
@@ -17,7 +17,7 @@ public class Input {
 	public static final int ANY_KEY = 6;
 	private static final int NUM_KEYS = ANY_KEY + 1;
 	static {
-		mouse = new Vector2();
+		mouse = new Vector3();
 		keys = new boolean[NUM_KEYS];
 		keysPrev = new boolean[NUM_KEYS];
 	}
