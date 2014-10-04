@@ -3,7 +3,6 @@ package com.dvdfu.gijam.handlers;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.dvdfu.gijam.visuals.Sprites;
 
 public class GameStage extends Stage {
 	private Vector3 camPosition;
@@ -60,8 +59,6 @@ public class GameStage extends Stage {
 	public void draw() {
 		getSpriteBatch().begin();
 		getSpriteBatch().setColor(80f / 255, 23f / 255, 23f / 255, 1);
-		getSpriteBatch().draw(Sprites.plain.getFrame(0), getCamX() - Consts.ScreenWidth / 2,
-			getCamY() - Consts.ScreenHeight / 2, Consts.ScreenWidth, Consts.ScreenHeight);
 		getSpriteBatch().end();
 		super.draw();
 	}

@@ -1,11 +1,13 @@
 package com.dvdfu.gijam.objects;
 
 import com.dvdfu.gijam.handlers.GameStage;
+import com.dvdfu.gijam.visuals.Sprites;
 
 public class Player extends GameObject {
 
 	public Player(GameStage stage) {
 		super(stage);
+		setSprite(Sprites.player);
 		reset();
 	}
 
@@ -14,7 +16,8 @@ public class Player extends GameObject {
 		setSize(32, 32);
 	}
 
-	public void update() {
-		System.out.println("aa");
+	public void act(float delta) {
 	}
+
+	public void update() {}
 }

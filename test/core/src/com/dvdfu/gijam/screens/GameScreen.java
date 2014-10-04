@@ -13,6 +13,7 @@ public class GameScreen extends AbstractScreen {
 		stage = new GameStage();
 		player = new Player(stage);
 		stage.addActor(player);
+		stage.setCamPosition(0, 0);
 	}
 	public void render(float delta) {
 		stage.act(delta);
