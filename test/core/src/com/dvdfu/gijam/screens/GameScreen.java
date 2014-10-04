@@ -20,7 +20,7 @@ public class GameScreen extends AbstractScreen {
 	private Block currentBlock;
 	private float origX;
 	private float origY;
-	
+
 	private float newX;
 	private float newY;
 
@@ -39,8 +39,10 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
+		chaser.update();
 		blockController();
 		stage.act(delta);
+		
 		stage.draw();
 	}
 
@@ -48,61 +50,55 @@ public class GameScreen extends AbstractScreen {
 		if (Input.MousePressed() && currentBlock == null) {
 			origX = Input.MouseX();
 			origY = Input.MouseY();
-			if(origX < Consts.DrawAreaRight){									//if the clicked area is not "drawable area"			
-				origX = Consts.DrawAreaRight;									//put it as the edge of the drawable area
-			}
-			else if(origX > Consts.ScreenWidth){
+			if (origX < Consts.DrawAreaRight) { // if the clicked area is not
+												// "drawable area"
+				origX = Consts.DrawAreaRight; // put it as the edge of the
+												// drawable area
+			} else if (origX > Consts.ScreenWidth) {
 				origX = Consts.ScreenWidth;
 			}
-			if(origY < 0){														//if clicked area is below the screen			
-				origY = 0;														//set the Y coord as 0 (bottom of the page)
-			}
-			else if(origY > Consts.ScreenHeight){
+			if (origY < 0) { // if clicked area is below the screen
+				origY = 0; // set the Y coord as 0 (bottom of the page)
+			} else if (origY > Consts.ScreenHeight) {
 				origY = Consts.ScreenHeight;
 			}
-			
 
 			currentBlock = pool.getBlock();
 			blocks.addActor(currentBlock);
-		} 
-		else if (Input.MouseDown() && currentBlock != null) {
+		} else if (Input.MouseDown() && currentBlock != null) {
 			newX = Input.MouseX();
 			newY = Input.MouseY();
-			//float width = Math.abs(Input.MouseX() - origX);
-			//float height = Math.abs(Input.MouseY() - origY);
-			//currentBlock.setPosition(Math.min(Input.MouseX(), origX),Math.min(Input.MouseY(), origY));
-			
-			if(newX < Consts.DrawAreaRight){								// if new selection goes below half of the screen			
-				newX = Consts.DrawAreaRight;								// set it on the edge of the screen
-			}
-			else if(newX > Consts.ScreenWidth){
+
+			if (newX < Consts.DrawAreaRight) { // if new selection goes below
+												// half of the screen
+				newX = Consts.DrawAreaRight; // set it on the edge of the screen
+			} else if (newX > Consts.ScreenWidth) {
 				newX = Consts.ScreenWidth;
 			}
-			if(newY < 0){													// if new selection Y-coord goes below the screen			
-				newY = 0;													//set it on the edge of the screen
-			}
-			else if(newY > Consts.ScreenHeight){
+			if (newY < 0) { // if new selection Y-coord goes below the screen
+				newY = 0; // set it on the edge of the screen
+			} else if (newY > Consts.ScreenHeight) {
 				newY = Consts.ScreenHeight;
 			}
-			
+
 			float width = Math.abs(newX - origX);
 			float height = Math.abs(newY - origY);
-			currentBlock.setPosition(Math.min(newX, origX), Math.min(newY, origY));
+			currentBlock.setPosition(Math.min(newX, origX),
+					Math.min(newY, origY));
 			currentBlock.setSize(width, height);
-		} 
-		else if (Input.MouseReleased() && currentBlock != null) {
+		} else if (Input.MouseReleased() && currentBlock != null) {
 			// if (currentBlock.getWidth() * currentBlock.getHeight() > 500) {
 			currentBlock.createBlock();
 			currentBlock = null;
 			// }
 		}
-		
+
 		for (Actor actor : blocks.getChildren()) {
 			Block block = (Block) actor;
+			chaser.collideBlock(block);
 			if (block.isDead()) {
 				blocks.removeActor(block);
 				pool.free(block);
-				System.out.println(blocks.getChildren().size);
 			}
 		}
 	}
