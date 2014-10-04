@@ -6,6 +6,9 @@ import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.visuals.Sprites;
 
 public class Chaser extends GameObject {
+	private int jumpsMax = 2;
+	private int jumpsLeft = jumpsMax;
+	private int jumpHeight = 7;
 	private boolean grounded;
 
 	public Chaser(GameStage stage) {
@@ -21,18 +24,31 @@ public class Chaser extends GameObject {
 
 	public void act(float delta) {
 		super.act(delta);
+		 xSpeed = 0.5f;
+		
 		grounded = getY() <= 0;
 		if (grounded) {
 			ySpeed = 0;
+			jumpsLeft = jumpsMax;
 			setY(0);
-			if (Input.KeyPressed(Input.ARROW_UP)) {
-				ySpeed = 7;
-			}
 		} else {
 			ySpeed -= Consts.Gravity;
 		}
-		xSpeed = 0.5f;
+		
+
+		if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
+			ySpeed = jumpHeight;
+			jumpsLeft--;
+		}
+		
+		if (Input.KeyDown(Input.ARROW_RIGHT)) {
+			xSpeed += 0.5f;
+		}
+		if (Input.KeyDown(Input.ARROW_LEFT)) {
+			xSpeed -= 0.5f;
+		}
 	}
 
-	public void update() {}
+	public void update() {
+	}
 }

@@ -1,9 +1,10 @@
 package com.dvdfu.gijam.handlers;
 
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 
 public class Input {
-	public static Vector3 mouse;
+	public static Vector2 mouse;
 	public static boolean mouseClick;
 	private static boolean mouseClickPrev;
 	public static boolean[] keys;
@@ -17,7 +18,7 @@ public class Input {
 	public static final int ANY_KEY = 6;
 	private static final int NUM_KEYS = ANY_KEY + 1;
 	static {
-		mouse = new Vector3();
+		mouse = new Vector2();
 		keys = new boolean[NUM_KEYS];
 		keysPrev = new boolean[NUM_KEYS];
 	}
@@ -39,6 +40,14 @@ public class Input {
 
 	public static boolean MouseReleased() {
 		return !mouseClick && mouseClickPrev;
+	}
+	
+	public static float MouseX() {
+		return mouse.x;
+	}
+	
+	public static float MouseY() {
+		return Gdx.graphics.getHeight() - mouse.y;
 	}
 
 	public static void setKey(int i, boolean b) {

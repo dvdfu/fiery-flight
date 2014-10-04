@@ -1,24 +1,27 @@
-//package com.dvdfu.gijam.handlers;
-//
-//import com.badlogic.gdx.utils.Pool;
-//
-//public class ObjectPool {
-//
-//	public ObjectPool(final GameStage stage) {
-//		solid = new Pool<Floor>() {
-//			protected Floor newObject() {
-//				return new Floor(stage);
-//			}
-//		};
-//	}
-//
-//	public Floor getSolid() {
-//		return solid.obtain();
-//	}
-//
-//	public void free(GameObject object) {
-//		if (object instanceof Floor) {
-//			solid.free((Floor) object);
-//		}
-//	}
-//}
+package com.dvdfu.gijam.handlers;
+
+import com.badlogic.gdx.utils.Pool;
+import com.dvdfu.gijam.objects.Block;
+import com.dvdfu.gijam.objects.GameObject;
+
+public class ObjectPool {
+	Pool<Block> blocks;
+
+	public ObjectPool(final GameStage stage) {
+		blocks = new Pool<Block>() {
+			protected Block newObject() {
+				return new Block(stage);
+			}
+		};
+	}
+
+	public Block getBlock() {
+		return blocks.obtain();
+	}
+
+	public void free(GameObject object) {
+		if (object instanceof Block) {
+			blocks.free((Block) object);
+		}
+	}
+}
