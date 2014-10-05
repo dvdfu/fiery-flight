@@ -27,6 +27,7 @@ public abstract class GameObject extends Actor implements Poolable {
 		this.stage = stage;
 		bounds = new Bound();
 		spriteSpeed = 10;
+		sprite = null;
 	}
 
 	public void act(float delta) {

@@ -18,11 +18,11 @@ public class Block extends GameObject {
 	public void reset() {
 		created = false;
 		dead = false;
-		setBounds();
 	}
 
 	public void act(float delta) {
 		super.act(delta);
+		xSpeed = Consts.GameSpeed;
 		if (created) {
 			if (getY() <= 0) {
 				ySpeed = 0;
@@ -53,7 +53,6 @@ public class Block extends GameObject {
 
 	public void createBlock() {
 		created = true;
-		xSpeed = -1.5f;
 	}
 	
 	public void collideBlock(Block block) {
@@ -64,6 +63,10 @@ public class Block extends GameObject {
 			}
 		}
 		setBounds();
+	}
+	
+	public void setDead() {
+		dead = true;
 	}
 	
 	public boolean isDead() {
