@@ -22,7 +22,7 @@ public class PowerUp extends GameObject {
 		type = MathUtils.random(1, 2);
 		setSize(20, 20);
 		setPosition(Consts.ScreenWidth,
-				MathUtils.random(10, 250));
+				MathUtils.random(10, 400));
 	}
 
 	public void act(float delta) {
