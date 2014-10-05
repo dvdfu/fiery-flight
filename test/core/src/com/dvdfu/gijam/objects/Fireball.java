@@ -1,6 +1,7 @@
 package com.dvdfu.gijam.objects;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.dvdfu.gijam.handlers.Consts;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.visuals.Sprites;
 
@@ -21,8 +22,9 @@ public class Fireball extends GameObject {
 	
 	public void act(float delta) {
 		float theta = MathUtils.atan2(targetY - getY(), targetX - getX());
-		xSpeed = MathUtils.cos(theta) * 10;
-		ySpeed = MathUtils.sin(theta) * 10;
+		xSpeed = MathUtils.cos(theta) * 4;
+		ySpeed = MathUtils.sin(theta) * 4;
+		setX(getX() - Consts.ScreenSpeed);
 		super.act(delta);
 	}
 

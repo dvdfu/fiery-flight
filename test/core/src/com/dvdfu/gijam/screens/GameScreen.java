@@ -92,7 +92,7 @@ public class GameScreen extends AbstractScreen {
 			Fireball fireball = pool.getFireball();
 			fireball.setPosition(Input.MouseX(), Input.MouseY());
 			fireballs.addActor(fireball);
-			fireballCounter = 1;
+			fireballCounter = 40;
 		}
 		
 		if (blockMeter < 0) {

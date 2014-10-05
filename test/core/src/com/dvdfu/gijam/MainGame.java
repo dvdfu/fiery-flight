@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.InputController;
 import com.dvdfu.gijam.screens.AbstractScreen;
-import com.dvdfu.gijam.screens.GameScreen;
+import com.dvdfu.gijam.screens.MenuScreen;
 
 public class MainGame extends Game {
 	private Stack<AbstractScreen> screens;
@@ -16,7 +16,7 @@ public class MainGame extends Game {
 	public void create() {
 		Gdx.input.setInputProcessor(new InputController());
 		screens = new Stack<AbstractScreen>();
-		enterScreen(new GameScreen(this));
+		enterScreen(new MenuScreen(this));
 	}
 
 	public void enterScreen(AbstractScreen screen) {
