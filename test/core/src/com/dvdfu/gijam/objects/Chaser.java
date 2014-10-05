@@ -1,5 +1,6 @@
 package com.dvdfu.gijam.objects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.gijam.handlers.Consts;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.handlers.Input;
@@ -13,7 +14,7 @@ public class Chaser extends GameObject {
 	private int dashesMax = 1;
 	private int dashesLeft = dashesMax;
 	private boolean dashing = false;
-	private int counter;
+	private int dashCounter;
 
 	public Chaser(GameStage stage) {
 		super(stage);
@@ -26,18 +27,45 @@ public class Chaser extends GameObject {
 		setSize(32, 32);
 	}
 
-	public void act(float delta) {
-		super.act(delta);
+	public void collideBlock(Block block) {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(block.bounds)) {
+			System.out.println(ySpeed + " " + xSpeed);
+			if (bounds.getY() < block.getTop() && ySpeed < 0) {
+				ySpeed = 0;
+				jumpsLeft = jumpsMax;
+				setY(block.getTop());
+			} else if (bounds.getTop() > block.getY() && ySpeed > 0) {
+				ySpeed = 0;
+				setY(block.getY() - getHeight());
+			}
+			if (bounds.getX() < block.getRight() && xSpeed < 0) {
+				xSpeed = 0;
+				setX(block.getRight());
+			} else if (bounds.getRight() > block.getX() && xSpeed > 0) {
+				xSpeed = 0;
+				setX(block.getX() - getWidth());
+			}
+		}
+		setBounds();
+	}
+
+	public void draw(Batch batch, float parentAlpha) {
+		batch.setColor(1, 1, 1, 1);
+		super.draw(batch, parentAlpha);
+	}
+
+	public void update() {
 		xSpeed = 0.5f;
 
-		if (dashing && counter > 0) {
-			if (counter > 20) {
+		if (dashing && dashCounter > 0) {
+			if (dashCounter > 20) {
 				Consts.GameSpeed -= 1f;
-			} else if (counter <= 10) {
+			} else if (dashCounter <= 10) {
 				Consts.GameSpeed += 1f;
 			}
-			counter -= 1;
-		} else if (dashing && counter == 0) {
+			dashCounter -= 1;
+		} else if (dashing && dashCounter == 0) {
 			dashing = false;
 			Consts.GameSpeed = -1.5f;
 		} else {
@@ -60,14 +88,11 @@ public class Chaser extends GameObject {
 				ySpeed = 0;
 				dashesLeft--;
 				dashing = true;
-				counter = 30;
+				dashCounter = 30;
 			}
 			if (Input.KeyDown(Input.ARROW_LEFT)) {
 				xSpeed -= 0.5f;
 			}
 		}
-	}
-
-	public void update() {
 	}
 }
