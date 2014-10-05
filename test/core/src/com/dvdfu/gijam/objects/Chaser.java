@@ -16,8 +16,6 @@ public class Chaser extends GameObject {
 	private float jumpSpeed = 7;
 	private int currentPowerUp;
 	private int powerUpCounter;
-	private float extraSpeed;
-	private int extraJump;
 
 	public Chaser(GameStage stage) {
 		super(stage);
@@ -91,21 +89,20 @@ public class Chaser extends GameObject {
 		if (currentPowerUp != 0) {
 			if (powerUpCounter == 0) {
 				currentPowerUp = 0;
-				extraSpeed = 0f;
-				extraJump = 0;
+				jumpSpeed = 7f;
 			} else {
 				powerUpCounter--;
 			}
 			if (currentPowerUp == 1) {
-				extraSpeed = 3f;
+				
 			}
 			else if (currentPowerUp == 2) {
-				extraJump = 3;
+				jumpSpeed = 10f;
 			}
 		}
 
 		if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
-			ySpeed = jumpSpeed + extraJump;
+			ySpeed = jumpSpeed;
 			jumpsLeft--;
 		}
 		grounded = getY() <= 0;
