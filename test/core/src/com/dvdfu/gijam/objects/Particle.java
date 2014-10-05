@@ -34,7 +34,6 @@ public class Particle extends GameObject {
 			break;
 		case FIRE:
 			setSprite(Sprites.blank, 16, 16);
-			setSize(24, 24);
 			timer = 48;
 			ySpeed = MathUtils.random(2f);
 			xSpeed = MathUtils.random(-1f, 1f);
@@ -51,7 +50,7 @@ public class Particle extends GameObject {
 			setSize(getWidth() - 1, getHeight() - 1);
 			break;
 		case FIRE:
-			setSize(getWidth() - 0.5f, getHeight() - 0.5f);
+			setSize(timer / 2, timer / 2);
 			break;
 		}
 		timer--;
@@ -64,7 +63,7 @@ public class Particle extends GameObject {
 			if (timer > 24) {
 				batch.setColor(1, (timer - 24) / 24f, 0, 1);
 			} else {
-				batch.setColor(0.5f, 0.5f, 0.5f, timer / 24f);
+				batch.setColor(0.4f, 0.4f, 0.4f, timer / 24f);
 			}
 		default:
 			super.draw(batch, parentAlpha);

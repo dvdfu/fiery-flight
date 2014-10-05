@@ -37,9 +37,6 @@ public class Chaser extends GameObject {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
 			if (getY() >= block.getTop()) {
-				if (Input.KeyDown(Input.ARROW_UP)) {
-					block.setDead();
-				}
 				setY(block.getTop());
 				jumpsLeft = jumpsMax;
 				ySpeed = 0;
