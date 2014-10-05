@@ -13,6 +13,7 @@ import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.ObjectPool;
 import com.dvdfu.gijam.objects.Background;
 import com.dvdfu.gijam.objects.Block;
+import com.dvdfu.gijam.objects.RandomBlock;
 import com.dvdfu.gijam.objects.Chaser;
 import com.dvdfu.gijam.objects.Fireball;
 import com.dvdfu.gijam.objects.Particle;
@@ -30,8 +31,10 @@ public class GameScreen extends AbstractScreen {
 	private Group particles;
 	private Group fireballs;
 	private int deadTimer;
+	private Group randomblocks;
 
 	private Block currentBlock;
+	private RandomBlock curRanBlock;
 	private float origX;
 	private float origY;
 
@@ -53,6 +56,10 @@ public class GameScreen extends AbstractScreen {
 
 	private int powerUpCounter = MathUtils.random(300, 600);
 	private int fireballCounter;
+
+	private int RandomSecCount = MathUtils.random(180, 420);
+	private float randomWidth;
+	private float randomHeight;
 
 	public GameScreen(MainGame game) {
 		super(game);
@@ -77,6 +84,9 @@ public class GameScreen extends AbstractScreen {
 		newBlock.createBlock();
 		blocks.addActor(newBlock);
 
+		randomblocks = new Group();
+		stage.addActor(randomblocks);
+
 		powerUps = new Group();
 		stage.addActor(powerUps);
 
@@ -93,7 +103,7 @@ public class GameScreen extends AbstractScreen {
 	public void render(float delta) {
 		if (deadTimer == 0) {
 			if (fireballCounter > 0) {
-				fireballCounter--;
+				//fireballCounter--;
 			} else {
 				Fireball fireball = pool.getFireball();
 				fireball.setPosition(runner.getCX(), runner.getCY());
@@ -110,11 +120,16 @@ public class GameScreen extends AbstractScreen {
 			// System.out.println(playerMeter + " : " + blockMeter);
 			bg.update();
 			chaser.update();
+			randomBlockGen();
 			runner.update();
+			runner.collideChaser(chaser);
 			powerUpController();
 			blockController();
 			if (chaser.isDead()) {
-				deadTimer = 100;
+				deadTimer = 60;
+			}
+			if (runner.wonGame()) {
+				game.changeScreen(new WinScreen(game));
 			}
 
 			stage.act(delta);
@@ -153,6 +168,27 @@ public class GameScreen extends AbstractScreen {
 		}
 	}
 
+	private void randomBlockGen() {
+		if (RandomSecCount > 0) {
+			RandomSecCount--;
+		} else {
+			curRanBlock = pool.getRandomBlock();
+			randomblocks.addActor(curRanBlock);
+
+			randomWidth = MathUtils.random(minDimSize, 200);
+			randomHeight = MathUtils.random(minDimSize, 200);
+
+			curRanBlock.setSize(randomWidth, randomHeight);
+			curRanBlock.setPosition(
+					Consts.ScreenWidth,
+					MathUtils.random(10, Consts.ScreenHeight - randomHeight
+							- 10));
+			curRanBlock.createBlock();
+
+			RandomSecCount = MathUtils.random(240, 420);
+		}
+	}
+
 	private void blockController() {
 		for (int i = 0; i < blocks.getChildren().size; i++) {
 			Block block = (Block) blocks.getChildren().get(i);
@@ -182,6 +218,11 @@ public class GameScreen extends AbstractScreen {
 				pool.free(block);
 				i--;
 			}
+		}
+		for (int i = 0; i < randomblocks.getChildren().size; i++) {
+			Block block = (Block) randomblocks.getChildren().get(i);
+			block.update();
+			chaser.collideBlock(block);
 		}
 
 		for (Actor actor : particles.getChildren()) {

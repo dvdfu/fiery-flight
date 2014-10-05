@@ -15,4 +15,5 @@ public class Sprites {
 	public static final Sprite blockBR = atlas.createSprite("block-br");
 	public static final Sprite bgMountain = atlas.createSprite("mountains");
 	public static final Sprite menu = atlas.createSprite("menu");
+	public static final Sprite win = atlas.createSprite("win");
 }

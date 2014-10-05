@@ -8,8 +8,6 @@ import com.dvdfu.gijam.visuals.Sprites;
 public class Block extends GameObject {
 	private boolean created;
 	private boolean dead;
-	private float hitX;
-	private float hitY;
 
 	public Block(GameStage stage) {
 		super(stage);
@@ -78,13 +76,5 @@ public class Block extends GameObject {
 
 	public boolean isDead() {
 		return dead;
-	}
-	
-	public float hitX() {
-		return hitX;
-	}
-	
-	public float hitY() {
-		return hitY;
 	}
 }

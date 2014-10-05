@@ -17,58 +17,65 @@ menu
   orig: 400, 91
   offset: 0, 0
   index: -1
+win
+  rotate: false
+  xy: 403, 460
+  size: 319, 34
+  orig: 319, 34
+  offset: 0, 0
+  index: -1
 player_run_r
   rotate: false
-  xy: 403, 478
+  xy: 403, 442
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 blank
   rotate: false
-  xy: 403, 444
+  xy: 724, 462
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 boulder
   rotate: false
-  xy: 403, 410
+  xy: 403, 408
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 block-tl
   rotate: false
-  xy: 469, 478
+  xy: 469, 442
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-tr
   rotate: false
-  xy: 437, 460
+  xy: 758, 478
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-main
   rotate: false
-  xy: 403, 392
+  xy: 403, 390
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-br
   rotate: false
-  xy: 487, 478
+  xy: 437, 424
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-bl
   rotate: false
-  xy: 437, 442
+  xy: 487, 442
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

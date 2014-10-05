@@ -6,12 +6,14 @@ import com.dvdfu.gijam.objects.Fireball;
 import com.dvdfu.gijam.objects.GameObject;
 import com.dvdfu.gijam.objects.Particle;
 import com.dvdfu.gijam.objects.PowerUp;
+import com.dvdfu.gijam.objects.RandomBlock;
 
 public class ObjectPool {
 	Pool<Block> blocks;
 	Pool<PowerUp> powerUps;
 	Pool<Particle> particles;
 	Pool<Fireball> fireballs;
+	Pool<RandomBlock> randomblocks;
 
 	public ObjectPool(final GameStage stage) {
 		blocks = new Pool<Block>() {
@@ -34,6 +36,11 @@ public class ObjectPool {
 				return new Fireball(stage);
 			}
 		};
+		randomblocks = new Pool<RandomBlock>(){
+			protected RandomBlock newObject() {
+				return new RandomBlock(stage);
+			}
+		};
 	}
 
 	public Block getBlock() {
@@ -51,6 +58,9 @@ public class ObjectPool {
 	public Fireball getFireball() {
 		return fireballs.obtain();
 	}
+	public RandomBlock getRandomBlock() {
+		return randomblocks.obtain();
+	}
 
 	public void free(GameObject object) {
 		if (object instanceof Block) {
@@ -61,6 +71,8 @@ public class ObjectPool {
 			particles.free((Particle) object);
 		} else if (object instanceof Fireball) {
 			fireballs.free((Fireball) object);
+		} else if(object instanceof RandomBlock) {
+			randomblocks.free((RandomBlock) object);
 		}
 	}
 }

@@ -25,7 +25,7 @@ public class Chaser extends GameObject {
 	private float playerMeter = playerMeterMax;
 	private int playerMeterCounter = 200;
 	private boolean dead;
-	
+
 	public Chaser(GameStage stage) {
 		super(stage);
 		stretched = true;
@@ -90,38 +90,23 @@ public class Chaser extends GameObject {
 		setX(getX() - Consts.ScreenSpeed);
 		super.act(delta);
 	}
-	
+
 	public boolean isDead() {
 		return getTop() < 0 || dead;
 	}
 
 	public void update() {
-		// if (getX() < 0) {
-		// setX(0);
-		// }
-		// if (getY() <= 0) {
-		// ySpeed = 0;
-		// jumpsLeft = jumpsMax;
-		// setY(0);
-		// }
-		
-		System.out.println(playerMeter);
-		if(playerMeter < playerMeterMax)
-		{
+		if (playerMeter < playerMeterMax) {
 			playerMeterCounter--;
-			if(playerMeterCounter ==0)
-			{
+			if (playerMeterCounter == 0) {
 				playerMeter += 100;
 				playerMeterCounter = 200;
 			}
-		}
-		else if(playerMeter > playerMeterMax)
-		{
+		} else if (playerMeter > playerMeterMax) {
 			playerMeter = playerMeterMax;
 		}
 		move();
 	}
-	
 
 	public void move() {
 		if (!dashing) {
@@ -215,5 +200,9 @@ public class Chaser extends GameObject {
 				xSpeed = 0;
 			}
 		}
+	}
+
+	public boolean isDashing() {
+		return dashing;
 	}
 }
