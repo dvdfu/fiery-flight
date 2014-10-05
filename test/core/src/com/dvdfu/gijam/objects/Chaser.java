@@ -21,6 +21,11 @@ public class Chaser extends GameObject {
 	private int dashCounter;
 	private float dashSpeedX, dashSpeedY;
 
+	private float playerMeterMax = 500;
+	private float playerMeter = playerMeterMax;
+	private int playerMeterCounter = 200;
+	private boolean dead;
+	
 	public Chaser(GameStage stage) {
 		super(stage);
 		stretched = true;
@@ -31,15 +36,13 @@ public class Chaser extends GameObject {
 	public void reset() {
 		setPosition(0, 0);
 		setSize(48, 48);
+		dead = false;
 	}
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
 			if (getY() >= block.getTop()) {
-				if (Input.KeyDown(Input.ARROW_UP)) {
-					block.setDead();
-				}
 				setY(block.getTop());
 				jumpsLeft = jumpsMax;
 				ySpeed = 0;
@@ -76,6 +79,10 @@ public class Chaser extends GameObject {
 		setX(getX() - Consts.ScreenSpeed);
 		super.act(delta);
 	}
+	
+	public boolean isDead() {
+		return getTop() < 0;
+	}
 
 	public void update() {
 		// if (getX() < 0) {
@@ -86,8 +93,24 @@ public class Chaser extends GameObject {
 		// jumpsLeft = jumpsMax;
 		// setY(0);
 		// }
+		
+		System.out.println(playerMeter);
+		if(playerMeter < playerMeterMax)
+		{
+			playerMeterCounter--;
+			if(playerMeterCounter ==0)
+			{
+				playerMeter += 100;
+				playerMeterCounter = 200;
+			}
+		}
+		else if(playerMeter > playerMeterMax)
+		{
+			playerMeter = playerMeterMax;
+		}
 		move();
 	}
+	
 
 	public void move() {
 		if (!dashing) {
@@ -109,11 +132,13 @@ public class Chaser extends GameObject {
 		}
 
 		if (Input.KeyDown(Input.Z)
+				&& (playerMeter >= 200)
 				&& !dashing
 				&& (Input.KeyDown(Input.ARROW_UP)
 						|| Input.KeyDown(Input.ARROW_DOWN)
 						|| Input.KeyDown(Input.ARROW_LEFT) || Input
 							.KeyDown(Input.ARROW_RIGHT))) {
+			playerMeter -= 200f;
 			jumpsLeft = 0;
 			xSpeed = 0;
 			ySpeed = 0;

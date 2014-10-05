@@ -5,63 +5,70 @@ filter: Nearest,Nearest
 repeat: none
 mountains
   rotate: false
-  xy: 1, 71
+  xy: 1, 94
   size: 400, 400
   orig: 400, 400
   offset: 0, 0
   index: -1
+menu
+  rotate: false
+  xy: 1, 1
+  size: 400, 91
+  orig: 400, 91
+  offset: 0, 0
+  index: -1
 player_run_r
   rotate: false
-  xy: 1, 53
+  xy: 403, 478
   size: 64, 16
   orig: 64, 16
   offset: 0, 0
   index: -1
 blank
   rotate: false
-  xy: 403, 439
+  xy: 403, 444
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 boulder
   rotate: false
-  xy: 1, 19
+  xy: 403, 410
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 block-tl
   rotate: false
-  xy: 67, 53
+  xy: 469, 478
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-tr
   rotate: false
-  xy: 403, 421
+  xy: 437, 460
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-main
   rotate: false
-  xy: 437, 455
+  xy: 403, 392
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-br
   rotate: false
-  xy: 1, 1
+  xy: 487, 478
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-bl
   rotate: false
-  xy: 35, 35
+  xy: 437, 442
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
