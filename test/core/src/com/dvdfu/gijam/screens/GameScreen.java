@@ -37,8 +37,7 @@ public class GameScreen extends AbstractScreen {
 	private float savedX;
 	private float savedY;
 
-	private float playerMeterMax = 500;
-	private float playerMeter = playerMeterMax;
+
 	private float blockMeterMax = 400000;
 	private float blockMeter = blockMeterMax;
 
@@ -101,7 +100,7 @@ public class GameScreen extends AbstractScreen {
 			blockMeter = blockMeterMax;
 		}
 		GaugeController();
-		System.out.println(playerMeter + " : " + blockMeter);
+		//System.out.println(playerMeter + " : " + blockMeter);
 		bg.update();
 		chaser.update();
 		powerUpController();
@@ -111,9 +110,6 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	private void GaugeController() {
-		if (playerMeter < playerMeterMax) {
-			playerMeter += 0.05f;
-		}
 		if (blockMeter < blockMeterMax) {
 			blockMeter += 50f;
 		}
