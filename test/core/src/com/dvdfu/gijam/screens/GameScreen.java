@@ -31,6 +31,21 @@ public class GameScreen extends AbstractScreen {
 
 	private float newX;
 	private float newY;
+	private float savedX;
+	private float savedY;
+
+	private float MaxLeftG = 500f;
+	private float MaxRightG = 40000f;
+	private float LeftGauge = 500f;
+	private float RightGauge = 40000f;
+
+	private float width;
+	private float height;
+
+	private float MaxAWidth;
+	private float MaxAHeight;
+
+	private float minDimSize = 50f;
 
 	private int powerUpCounter = MathUtils.random(300, 600);
 
@@ -57,13 +72,29 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
+
+		if (RightGauge < 0) {
+			RightGauge = 0;
+		} else if (RightGauge > MaxRightG) {
+			RightGauge = MaxRightG;
+		}
+		GaugeController();
+		System.out.println(LeftGauge + " : " + RightGauge);
 		bg.update();
 		chaser.update();
 		powerUpController();
 		blockController();
 		stage.act(delta);
-
 		stage.draw();
+	}
+
+	private void GaugeController() {
+		if (LeftGauge < MaxLeftG) {
+			LeftGauge += 0.05f;
+		}
+		if (RightGauge < MaxRightG) {
+			RightGauge += 50f;
+		}
 	}
 
 	private void powerUpController() {
@@ -127,17 +158,53 @@ public class GameScreen extends AbstractScreen {
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
 			origX -= Consts.ScreenSpeed;
+
 			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
 			newY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);
 
-			float width = Math.abs(newX - origX);
-			float height = Math.abs(newY - origY);
-			currentBlock.setPosition(Math.min(newX, origX),
-					Math.min(newY, origY));
-			currentBlock.setSize(width, height);
+			width = Math.abs(newX - origX);
+			height = Math.abs(newY - origY);
+
+			width = MathUtils.clamp(width, minDimSize, Consts.ScreenWidth);
+			height = MathUtils.clamp(height, minDimSize, Consts.ScreenHeight);
+
+			if (newX > origX) {
+				newX = origX + width;
+			} else if (newX < origX) {
+				newX = origX - width;
+			}
+			if (newY > origY) {
+				newY = origY + height;
+			} else if (newY < origY) {
+				newY = origY - height;
+			}
+
+			if (width * height <= RightGauge) {
+				savedX = newX;
+				savedY = newY;
+				MaxAHeight = height;
+				MaxAWidth = width;
+				currentBlock.setPosition(Math.min(newX, origX),
+						Math.min(newY, origY));
+				currentBlock.setSize(width, height);
+			}
+
 		} else if (Input.MouseReleased() && currentBlock != null) {
-			currentBlock.createBlock();
+			if (width * height <= RightGauge) {
+				currentBlock.createBlock();
+				RightGauge -= (width * height);
+			} else if (RightGauge >= 2500) {
+				currentBlock.setSize(MaxAWidth, MaxAHeight);
+				currentBlock.setPosition(Math.min(savedX, origX),
+						Math.min(savedY, origY));
+				currentBlock.createBlock();
+				RightGauge -= (MaxAWidth * MaxAHeight);
+				MaxAHeight = minDimSize;
+				MaxAWidth = minDimSize;
+				// blocks.removeActor(currentBlock);
+				// pool.free(currentBlock);
+			}
 			currentBlock = null;
 		}
 	}
