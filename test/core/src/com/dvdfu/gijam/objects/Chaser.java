@@ -87,6 +87,8 @@ public class Chaser extends GameObject {
 		// jumpsLeft = jumpsMax;
 		// setY(0);
 		// }
+		
+		System.out.println(playerMeter);
 		if(playerMeter < playerMeterMax)
 		{
 			playerMeterCounter--;
@@ -98,7 +100,7 @@ public class Chaser extends GameObject {
 		}
 		else if(playerMeter > playerMeterMax)
 		{
-			
+			playerMeter = playerMeterMax;
 		}
 		move();
 	}
@@ -124,6 +126,7 @@ public class Chaser extends GameObject {
 		}
 
 		if (Input.KeyDown(Input.Z)
+				&& (playerMeter >= 200)
 				&& !dashing
 				&& (Input.KeyDown(Input.ARROW_UP)
 						|| Input.KeyDown(Input.ARROW_DOWN)
