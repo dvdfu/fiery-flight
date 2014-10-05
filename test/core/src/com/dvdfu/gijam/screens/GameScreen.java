@@ -1,6 +1,7 @@
 package com.dvdfu.gijam.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.dvdfu.gijam.MainGame;
@@ -23,6 +24,24 @@ public class GameScreen extends AbstractScreen {
 
 	private float newX;
 	private float newY;
+	private float savedX;
+	private float savedY;
+	
+	private float MaxLeftG = 500f;
+	private float MaxRightG = 40000f;
+	private float LeftGauge = 500f;
+	private float RightGauge = 40000f;
+
+	private float width;
+	private float height;
+	
+	private float MaxAWidth;
+	private float MaxAHeight;
+
+	private float minDimSize = 50f;
+
+
+	private int cnter = 0;
 
 	public GameScreen(MainGame game) {
 		super(game);
@@ -39,11 +58,27 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
+		if (RightGauge < 0) {
+			RightGauge = 0;
+		} else if (RightGauge > MaxRightG) {
+			RightGauge = MaxRightG;
+		}
+		GaugeController();
+		System.out.println(LeftGauge + " : " + RightGauge);
 		chaser.update();
 		blockController();
 		stage.act(delta);
-		
 		stage.draw();
+	}
+
+	private void GaugeController() {
+		if (LeftGauge < MaxLeftG) {
+			LeftGauge += 0.05f;
+		}
+		if (RightGauge < MaxRightG) {
+			RightGauge += 50f;
+		}
+
 	}
 
 	private void blockController() {
@@ -66,29 +101,62 @@ public class GameScreen extends AbstractScreen {
 			currentBlock = pool.getBlock();
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
-			newX = Input.MouseX();
-			newY = Input.MouseY();
 
-			if (newX < Consts.DrawAreaRight) { // if new selection goes below
-												// half of the screen
-				newX = Consts.DrawAreaRight; // set it on the edge of the screen
-			} else if (newX > Consts.ScreenWidth) {
-				newX = Consts.ScreenWidth;
+			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
+					Consts.ScreenWidth);
+			newY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);
+
+			width = Math.abs(newX - origX);
+			height = Math.abs(newY - origY);
+			
+			width = MathUtils.clamp(width, minDimSize, Consts.ScreenWidth);
+			height = MathUtils.clamp(height, minDimSize, Consts.ScreenHeight);
+			
+			if(newX > origX)
+			{
+				newX = origX + width;
 			}
-			if (newY < 0) { // if new selection Y-coord goes below the screen
-				newY = 0; // set it on the edge of the screen
-			} else if (newY > Consts.ScreenHeight) {
-				newY = Consts.ScreenHeight;
+			else if(newX < origX)
+			{
+				newX = origX - width;
+			}
+			if(newY > origY)
+			{
+				newY = origY + height;
+			}
+			else if(newY < origY)
+			{
+				newY = origY - height;
+			}
+			
+			if (width * height <= RightGauge) {
+				savedX = newX;
+				savedY = newY;
+				MaxAHeight = height;
+				MaxAWidth = width;
+				currentBlock.setPosition(Math.min(newX, origX),
+						Math.min(newY, origY));
+				currentBlock.setSize(width, height);
 			}
 
-			float width = Math.abs(newX - origX);
-			float height = Math.abs(newY - origY);
-			currentBlock.setPosition(Math.min(newX, origX),
-					Math.min(newY, origY));
-			currentBlock.setSize(width, height);
 		} else if (Input.MouseReleased() && currentBlock != null) {
 			// if (currentBlock.getWidth() * currentBlock.getHeight() > 500) {
+			if(width * height <= RightGauge)
+			{
 			currentBlock.createBlock();
+			RightGauge -= (width * height);
+			}
+			else if(RightGauge >= 2500)
+			{
+				currentBlock.setSize(MaxAWidth, MaxAHeight);
+				currentBlock.setPosition(Math.min(savedX, origX), Math.min(savedY, origY));
+				currentBlock.createBlock();
+				RightGauge -= (MaxAWidth * MaxAHeight);
+				MaxAHeight = minDimSize;
+				MaxAWidth = minDimSize;
+				//blocks.removeActor(currentBlock);
+				//pool.free(currentBlock);
+			}
 			currentBlock = null;
 			// }
 		}
