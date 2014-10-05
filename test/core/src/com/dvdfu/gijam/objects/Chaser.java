@@ -95,11 +95,14 @@ public class Chaser extends GameObject {
 			if (powerUpCounter == 0) {
 				currentPowerUp = 0;
 				jumpSpeed = 7f;
+				moveSpeed = 0.3f;
+				moveMax = 5;
 			} else {
 				powerUpCounter--;
 			}
 			if (currentPowerUp == 1) {
-
+				moveSpeed = 0.6f;
+				moveMax = 8;
 			} else if (currentPowerUp == 2) {
 				jumpSpeed = 10f;
 			}
