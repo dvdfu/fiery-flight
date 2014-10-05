@@ -1,7 +1,7 @@
 package com.dvdfu.gijam.objects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
-import com.dvdfu.gijam.handlers.Consts;
 import com.dvdfu.gijam.handlers.Enums.ParticleType;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.visuals.Sprites;
@@ -29,8 +29,15 @@ public class Particle extends GameObject {
 			setSprite(Sprites.blockC, 16, 16);
 			setSize(32, 32);
 			timer = 16;
-			ySpeed = MathUtils.random(-1, 1);
-			xSpeed = MathUtils.random(-1, 1);
+			ySpeed = MathUtils.random(-1f, 1f);
+			xSpeed = MathUtils.random(-1f, 1f);
+			break;
+		case FIRE:
+			setSprite(Sprites.blank, 16, 16);
+			setSize(24, 24);
+			timer = 48;
+			ySpeed = MathUtils.random(2f);
+			xSpeed = MathUtils.random(-1f, 1f);
 			break;
 		default:
 			break;
@@ -43,9 +50,26 @@ public class Particle extends GameObject {
 		case ROCK:
 			setSize(getWidth() - 1, getHeight() - 1);
 			break;
+		case FIRE:
+			setSize(getWidth() - 0.5f, getHeight() - 0.5f);
+			break;
 		}
 		timer--;
 		super.act(delta);
+	}
+
+	public void draw(Batch batch, float parentAlpha) {
+		switch (type) {
+		case FIRE:
+			if (timer > 24) {
+				batch.setColor(1, (timer - 24) / 24f, 0, 1);
+			} else {
+				batch.setColor(0.5f, 0.5f, 0.5f, timer / 24f);
+			}
+		default:
+			super.draw(batch, parentAlpha);
+			break;
+		}
 	}
 
 	public void reset() {

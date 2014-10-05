@@ -34,11 +34,11 @@ public class Background extends GameObject {
 	}
 	
 	public void draw(Batch batch, float parentAlpha) {
-		batch.setColor(0, 1, 1, 1);
+		batch.setColor(0.4f, 0.6f, 1, 1);
 		for (float i = offset1; i < Consts.ScreenWidth; i += Sprites.bgMountain.getWidth()) {
 			batch.draw(Sprites.bgMountain, i, 0);
 		}
-		batch.setColor(0, 1 / 2f, 1, 1);
+		batch.setColor(0.2f, 0.2f, 1, 1);
 		for (float i = offset2; i < Consts.ScreenWidth; i += Sprites.bgMountain.getWidth()) {
 			batch.draw(Sprites.bgMountain, i, -100);
 		}

@@ -7,7 +7,6 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class Block extends GameObject {
 	private boolean created;
-	private int createTimer;
 	private boolean dead;
 
 	public Block(GameStage stage) {
@@ -26,29 +25,15 @@ public class Block extends GameObject {
 		super.act(delta);
 		setX(getX() - Consts.ScreenSpeed);
 		if (created) {
-			if (createTimer > 0) {
-				createTimer--;
-			}
 			if (getRight() < 0) {
 				dead = true;
 			}
 		}
-		if (getY() > 0) {
-			if (created && createTimer == 0) {
-				ySpeed -= Consts.Gravity;
-			}
-		} else {
-			setY(0);
-			ySpeed = 0;
-		}
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		if (created) {
-			batch.setColor(1, 1, 1, 1);
-		} else {
-			batch.setColor(1, 1, 1, 0.5f);
-		}
+		float trans = created ? 1 : 0.5f;
+		batch.setColor(1, 1, 1, trans);
 
 		int size = 16;
 		batch.draw(Sprites.blockTL, getX(), getTop() - size);
@@ -73,7 +58,6 @@ public class Block extends GameObject {
 
 	public void createBlock() {
 		created = true;
-		createTimer = 60;
 	}
 
 	public void collideBlock(Block block) {

@@ -50,7 +50,7 @@ public class MainGame extends Game {
 
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(1 / 2f, 1 / 2f, 1 / 2f, 1);
+		Gdx.gl.glClearColor(0.8f, 0.9f, 1, 1);
 		if (getScreen() != null) {
 			super.render();
 		}

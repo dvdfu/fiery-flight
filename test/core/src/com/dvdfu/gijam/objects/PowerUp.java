@@ -8,12 +8,12 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class PowerUp extends GameObject {
 	private boolean dead;
-	public int type;
+	private int type;
 
 	public PowerUp(GameStage stage) {
 		super(stage);
 		stretched = true;
-		setSprite(Sprites.chaser);
+		setSprite(Sprites.blank, 16, 16);
 		reset();
 	}
 
@@ -22,7 +22,7 @@ public class PowerUp extends GameObject {
 		type = MathUtils.random(1, 2);
 		setSize(20, 20);
 		setPosition(Consts.ScreenWidth,
-				MathUtils.random(10, 250));
+				MathUtils.random(10, 400));
 	}
 
 	public void act(float delta) {
@@ -46,7 +46,11 @@ public class PowerUp extends GameObject {
 	public void update() {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 	}
-	
+
+	public int getType() {
+		return type;
+	}
+
 	public void setDead() {
 		dead = true;
 	}

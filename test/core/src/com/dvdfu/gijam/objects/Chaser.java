@@ -13,25 +13,33 @@ public class Chaser extends GameObject {
 	private int jumpsMax = 2;
 	private int jumpsLeft = jumpsMax;
 	private float jumpSpeed = 7;
+
 	private int currentPowerUp;
 	private int powerUpCounter;
 
+	private boolean dashing;
+	private int dashCounter;
+	private float dashSpeedX, dashSpeedY;
+
 	public Chaser(GameStage stage) {
 		super(stage);
+		stretched = true;
 		setSprite(Sprites.chaser);
 		reset();
 	}
 
 	public void reset() {
 		setPosition(0, 0);
-		setSize(32, 32);
+		setSize(48, 48);
 	}
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds) && block.isCreated()) {
-			block.setDead();
+		if (bounds.overlaps(block.bounds)) {
 			if (getY() >= block.getTop()) {
+				if (Input.KeyDown(Input.ARROW_UP)) {
+					block.setDead();
+				}
 				setY(block.getTop());
 				jumpsLeft = jumpsMax;
 				ySpeed = 0;
@@ -53,7 +61,7 @@ public class Chaser extends GameObject {
 	public void collidePowerUp(PowerUp powerUp) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(powerUp.bounds)) {
-			currentPowerUp = powerUp.type;
+			currentPowerUp = powerUp.getType();
 			powerUpCounter = 300;
 			powerUp.setDead();
 		}
@@ -70,19 +78,21 @@ public class Chaser extends GameObject {
 	}
 
 	public void update() {
-		if (getX() < 0) {
-			setX(0);
-		}
-		if (getY() <= 0) {
-			ySpeed = 0;
-			jumpsLeft = jumpsMax;
-			setY(0);
-		}
+		// if (getX() < 0) {
+		// setX(0);
+		// }
+		// if (getY() <= 0) {
+		// ySpeed = 0;
+		// jumpsLeft = jumpsMax;
+		// setY(0);
+		// }
 		move();
 	}
 
 	public void move() {
-		ySpeed -= Consts.Gravity;
+		if (!dashing) {
+			ySpeed -= Consts.Gravity;
+		}
 
 		if (currentPowerUp != 0) {
 			if (powerUpCounter == 0) {
@@ -98,29 +108,73 @@ public class Chaser extends GameObject {
 			}
 		}
 
-		if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
-			ySpeed = jumpSpeed;
-			jumpsLeft--;
+		if (Input.KeyDown(Input.Z)
+				&& !dashing
+				&& (Input.KeyDown(Input.ARROW_UP)
+						|| Input.KeyDown(Input.ARROW_DOWN)
+						|| Input.KeyDown(Input.ARROW_LEFT) || Input
+							.KeyDown(Input.ARROW_RIGHT))) {
+			jumpsLeft = 0;
+			xSpeed = 0;
+			ySpeed = 0;
+			dashing = true;
+			dashCounter = 20;
+			if (Input.KeyDown(Input.ARROW_UP)
+					|| (Input.KeyDown(Input.ARROW_UP) && Input
+							.KeyDown(Input.ARROW_DOWN))) {
+				dashSpeedY = 2f;
+			} else if (Input.KeyDown(Input.ARROW_DOWN)) {
+				dashSpeedY = -2f;
+			} else {
+				dashSpeedY = 0;
+			}
+			if (Input.KeyDown(Input.ARROW_RIGHT)
+					|| (Input.KeyDown(Input.ARROW_RIGHT) && Input
+							.KeyDown(Input.ARROW_LEFT))) {
+				dashSpeedX = 2f;
+			} else if (Input.KeyDown(Input.ARROW_LEFT)) {
+				dashSpeedX = -2f;
+			} else {
+				dashSpeedX = 0;
+			}
 		}
 
-		if (Input.KeyDown(Input.ARROW_RIGHT)) {
-			if (xSpeed < moveMax) {
-				xSpeed += moveSpeed;
-			} else
-				xSpeed = moveMax;
-		} else if (xSpeed > 0) {
-			xSpeed -= moveSpeed;
-		}
-		if (Input.KeyDown(Input.ARROW_LEFT)) {
-			if (xSpeed > -moveMax) {
+		if (dashing && dashCounter > 0) {
+			if (dashCounter > 10) {
+				xSpeed += dashSpeedX;
+				ySpeed += dashSpeedY;
+			} else if (dashCounter <= 8) {
+				xSpeed -= dashSpeedX;
+				if (getY() > 0) {
+					ySpeed -= dashSpeedY;
+				}
+			}
+			dashCounter--;
+		} else {
+			dashing = false;
+			if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
+				ySpeed = jumpSpeed;
+				jumpsLeft--;
+			}
+			if (Input.KeyDown(Input.ARROW_RIGHT)) {
+				if (xSpeed < moveMax) {
+					xSpeed += moveSpeed;
+				} else
+					xSpeed = moveMax;
+			} else if (xSpeed > 0) {
 				xSpeed -= moveSpeed;
-			} else
-				xSpeed = -moveMax;
-		} else if (xSpeed < 0) {
-			xSpeed += moveSpeed;
-		}
-		if (xSpeed > -moveSpeed && xSpeed < moveSpeed) {
-			xSpeed = 0;
+			}
+			if (Input.KeyDown(Input.ARROW_LEFT)) {
+				if (xSpeed > -moveMax) {
+					xSpeed -= moveSpeed;
+				} else
+					xSpeed = -moveMax;
+			} else if (xSpeed < 0) {
+				xSpeed += moveSpeed;
+			}
+			if (xSpeed > -moveSpeed && xSpeed < moveSpeed) {
+				xSpeed = 0;
+			}
 		}
 	}
 }
