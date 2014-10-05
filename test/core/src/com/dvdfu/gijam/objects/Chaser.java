@@ -166,8 +166,10 @@ public class Chaser extends GameObject {
 				xSpeed += dashSpeedX;
 				ySpeed += dashSpeedY;
 			} else if (dashCounter <= 8) {
-				xSpeed -= dashSpeedX;
-				if (getY() > 0) {
+				if (xSpeed != 0) {
+					xSpeed -= dashSpeedX;
+				}
+				if (ySpeed != 0) {
 					ySpeed -= dashSpeedY;
 				}
 			}
