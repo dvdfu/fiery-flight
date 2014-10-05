@@ -158,6 +158,7 @@ public class GameScreen extends AbstractScreen {
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
 			origX -= Consts.ScreenSpeed;
+			savedX -=Consts.ScreenSpeed;
 
 			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
@@ -205,6 +206,16 @@ public class GameScreen extends AbstractScreen {
 				// blocks.removeActor(currentBlock);
 				// pool.free(currentBlock);
 			}
+			height = 0;
+			width = 0;
+			origX = 0;
+			origY =0;
+			newX = 0;
+			newY =0;
+			savedX = 0;
+			savedY =0;
+			MaxAWidth =0;
+			MaxAHeight=0;
 			currentBlock = null;
 		}
 	}
