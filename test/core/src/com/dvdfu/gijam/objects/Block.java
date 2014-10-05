@@ -6,8 +6,8 @@ import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.visuals.Sprites;
 
 public class Block extends GameObject {
-	private boolean created;
-	private boolean dead;
+	protected boolean created;
+	protected boolean dead;
 
 	public Block(GameStage stage) {
 		super(stage);
