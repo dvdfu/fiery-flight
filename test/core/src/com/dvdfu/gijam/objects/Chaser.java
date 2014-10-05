@@ -7,14 +7,13 @@ import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.visuals.Sprites;
 
 public class Chaser extends GameObject {
+	private float moveMax = 5;
+	private float moveSpeed = 0.3f;
+
+	private boolean grounded, groundedBuffer;
 	private int jumpsMax = 2;
 	private int jumpsLeft = jumpsMax;
-	private int jumpHeight = 7;
-	private boolean grounded;
-	private int dashesMax = 1;
-	private int dashesLeft = dashesMax;
-	private boolean dashing;
-	private int dashCounter;
+	private float jumpSpeed = 7;
 
 	public Chaser(GameStage stage) {
 		super(stage);
@@ -29,21 +28,22 @@ public class Chaser extends GameObject {
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
-			if (dashing) {
-				block.setDead();
-			} else {
-				if (bounds.getY() <= block.getTop() && ySpeed < 0) {
-					ySpeed = 0;
-					jumpsLeft = jumpsMax;
-					setY(block.getTop());
-				} else if (bounds.getX() <= block.getRight() && xSpeed < 0) {
-					xSpeed = 0;
-					setX(block.getRight() + block.getXSpeed());
-				} else if (bounds.getRight() >= block.getX() && xSpeed >= 0) {
-					xSpeed = 0;
-					setX(block.getX() - getWidth() + block.getXSpeed());
-				}
+		if (bounds.overlaps(block.bounds) && block.isCreated()) {
+			if (getY() >= block.getTop()) {
+				setY(block.getTop());
+				groundedBuffer = true;
+				jumpsLeft = jumpsMax;
+				ySpeed = 0;
+			} else if (getTop() <= block.getY()) {
+				setY(block.getY() - getHeight());
+				ySpeed = 0;
+			}
+			if (getX() >= block.getRight()) {
+				setX(block.getRight());
+				xSpeed = 0;
+			} else if (getRight() <= block.getX()) {
+				setX(block.getX() - getWidth());
+				xSpeed = 0;
 			}
 		}
 		setBounds();
@@ -53,9 +53,10 @@ public class Chaser extends GameObject {
 		batch.setColor(1, 1, 1, 1);
 		super.draw(batch, parentAlpha);
 	}
-	
+
 	public void act(float delta) {
-		xSpeed += Consts.ScreenSpeed;
+		grounded = groundedBuffer;
+		setX(getX() - Consts.ScreenSpeed);
 		super.act(delta);
 	}
 
@@ -63,46 +64,50 @@ public class Chaser extends GameObject {
 		if (getX() < 0) {
 			setX(0);
 		}
+		if (getY() <= 0) {
+			ySpeed = 0;
+			jumpsLeft = jumpsMax;
+			setY(0);
+		}
+		move();
+	}
 
-		if (dashing && dashCounter > 0) {
-			if (dashCounter > 20) {
-				Consts.GameSpeed -= 1f;
-			} else if (dashCounter <= 10) {
-				Consts.GameSpeed += 1f;
-			}
-			dashCounter -= 1;
-		} else if (dashing && dashCounter == 0) {
-			dashing = false;
-			Consts.GameSpeed = -1.5f;
-		} else {
-			grounded = getY() <= 0;
+	public void move() {
+		ySpeed -= Consts.Gravity;
+		if (Input.KeyPressed(Input.Z)) {
 			if (grounded) {
-				ySpeed = 0;
-				jumpsLeft = jumpsMax;
-				dashesLeft = dashesMax;
-				setY(0);
-			} else {
-				ySpeed -= Consts.Gravity;
-			}
+				ySpeed = jumpSpeed;
 
-			if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
-				ySpeed = jumpHeight;
+			} else if (jumpsLeft > 0) {
+				ySpeed = jumpSpeed;
 				jumpsLeft--;
 			}
+		}
+		groundedBuffer = false;
 
-			if (Input.KeyDown(Input.Z) && dashesLeft > 0) {
-				ySpeed = 0;
-				dashesLeft--;
-				dashing = true;
-				dashCounter = 30;
-			}
-			if (Input.KeyDown(Input.ARROW_RIGHT)) {
-				xSpeed = 4;
-			} else if (Input.KeyDown(Input.ARROW_LEFT)) {
-				xSpeed = -4;
-			} else {
-				xSpeed = 0;
-			}
+		if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
+			ySpeed = jumpSpeed;
+			jumpsLeft--;
+		}
+
+		if (Input.KeyDown(Input.ARROW_RIGHT)) {
+			if (xSpeed < moveMax) {
+				xSpeed += moveSpeed;
+			} else
+				xSpeed = moveMax;
+		} else if (xSpeed > 0) {
+			xSpeed -= moveSpeed;
+		}
+		if (Input.KeyDown(Input.ARROW_LEFT)) {
+			if (xSpeed > -moveMax) {
+				xSpeed -= moveSpeed;
+			} else
+				xSpeed = -moveMax;
+		} else if (xSpeed < 0) {
+			xSpeed += moveSpeed;
+		}
+		if (xSpeed > -moveSpeed && xSpeed < moveSpeed) {
+			xSpeed = 0;
 		}
 	}
 }

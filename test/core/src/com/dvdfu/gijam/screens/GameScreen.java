@@ -94,6 +94,7 @@ public class GameScreen extends AbstractScreen {
 			currentBlock = pool.getBlock();
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
+			origX -= Consts.ScreenSpeed;
 			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
 			newY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);

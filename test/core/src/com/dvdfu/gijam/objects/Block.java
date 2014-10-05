@@ -7,6 +7,7 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class Block extends GameObject {
 	private boolean created;
+	private int createTimer;
 	private boolean dead;
 
 	public Block(GameStage stage) {
@@ -22,39 +23,58 @@ public class Block extends GameObject {
 
 	public void act(float delta) {
 		super.act(delta);
-		xSpeed = Consts.GameSpeed;
+		setX(getX() - Consts.ScreenSpeed);
 		if (created) {
-			if (getY() <= 0) {
-				ySpeed = 0;
-				setY(0);
-			}
-			else {
-				ySpeed -= Consts.Gravity;
+			if (createTimer > 0) {
+				createTimer--;
 			}
 			if (getRight() < 0) {
 				dead = true;
 			}
 		}
+		if (getY() > 0) {
+			if (created && createTimer == 0) {
+				ySpeed -= Consts.Gravity;
+			}
+		} else {
+			setY(0);
+			ySpeed = 0;
+		}
 	}
-	
+
 	public void draw(Batch batch, float parentAlpha) {
+		if (created) {
+			batch.setColor(1, 1, 1, 1);
+		} else {
+			batch.setColor(1, 1, 1, 0.5f);
+		}
+
 		int size = 16;
 		batch.draw(Sprites.blockTL, getX(), getTop() - size);
 		batch.draw(Sprites.blockTR, getRight() - size, getTop() - size);
 		batch.draw(Sprites.blockBL, getX(), getY());
 		batch.draw(Sprites.blockBR, getRight() - size, getY());
-		batch.draw(Sprites.blockC, getX(), getY() + size, getWidth(), getHeight() - size * 2);
-		batch.draw(Sprites.blockC, getX() + size, getY(), getWidth() - size * 2, getHeight());
+		batch.draw(Sprites.blockC, getX(), getY() + size, size, getHeight()
+				- size * 2);
+		batch.draw(Sprites.blockC, getRight() - size, getY() + size, size,
+				getHeight() - size * 2);
+		batch.draw(Sprites.blockC, getX() + size, getY(),
+				getWidth() - size * 2, getHeight());
 	}
 
 	public void update() {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 	}
 
+	public boolean isCreated() {
+		return created;
+	}
+
 	public void createBlock() {
 		created = true;
+		createTimer = 60;
 	}
-	
+
 	public void collideBlock(Block block) {
 		if (bounds.overlaps(block.bounds) && block.created) {
 			if (bounds.getY() < block.getTop() && ySpeed < 0) {
@@ -64,11 +84,11 @@ public class Block extends GameObject {
 		}
 		setBounds();
 	}
-	
+
 	public void setDead() {
 		dead = true;
 	}
-	
+
 	public boolean isDead() {
 		return dead;
 	}
