@@ -2,21 +2,24 @@ package com.dvdfu.gijam.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.dvdfu.gijam.MainGame;
 import com.dvdfu.gijam.handlers.Consts;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.ObjectPool;
+import com.dvdfu.gijam.objects.Background;
 import com.dvdfu.gijam.objects.Block;
 import com.dvdfu.gijam.objects.Chaser;
+import com.dvdfu.gijam.objects.PowerUp;
 
 public class GameScreen extends AbstractScreen {
 	private GameStage stage;
+	private Background bg;
 	private ObjectPool pool;
 	private Chaser chaser;
 	private Group blocks;
+	private Group powerUps;
 
 	private Block currentBlock;
 	private float origX;
@@ -26,7 +29,7 @@ public class GameScreen extends AbstractScreen {
 	private float newY;
 	private float savedX;
 	private float savedY;
-	
+
 	private float MaxLeftG = 500f;
 	private float MaxRightG = 40000f;
 	private float LeftGauge = 500f;
@@ -34,30 +37,34 @@ public class GameScreen extends AbstractScreen {
 
 	private float width;
 	private float height;
-	
+
 	private float MaxAWidth;
 	private float MaxAHeight;
 
 	private float minDimSize = 50f;
 
-
-	private int cnter = 0;
+	private int powerUpCounter = MathUtils.random(300, 600);
 
 	public GameScreen(MainGame game) {
 		super(game);
 		stage = new GameStage();
 		pool = new ObjectPool(stage);
+		bg = new Background(stage);
+		stage.addActor(bg);
 
 		chaser = new Chaser(stage);
 		stage.addActor(chaser);
 		blocks = new Group();
 		stage.addActor(blocks);
+		powerUps = new Group();
+		stage.addActor(powerUps);
 
 		stage.setCamPosition(Gdx.graphics.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2);
 	}
 
 	public void render(float delta) {
+
 		if (RightGauge < 0) {
 			RightGauge = 0;
 		} else if (RightGauge > MaxRightG) {
@@ -65,7 +72,9 @@ public class GameScreen extends AbstractScreen {
 		}
 		GaugeController();
 		System.out.println(LeftGauge + " : " + RightGauge);
+		bg.update();
 		chaser.update();
+		powerUpController();
 		blockController();
 		stage.act(delta);
 		stage.draw();
@@ -78,29 +87,53 @@ public class GameScreen extends AbstractScreen {
 		if (RightGauge < MaxRightG) {
 			RightGauge += 50f;
 		}
+	}
 
+	private void powerUpController() {
+		if (powerUpCounter > 0) {
+			powerUpCounter--;
+		} else {
+			PowerUp powerUp = pool.getPowerUp();
+			powerUps.addActor(powerUp);
+			powerUpCounter = MathUtils.random(300, 600);
+		}
+
+		for (int i = 0; i < powerUps.getChildren().size; i++) {
+			PowerUp powerUp = (PowerUp) powerUps.getChildren().get(i);
+			powerUp.update();
+			chaser.collidePowerUp(powerUp);
+			if (powerUp.isDead()) {
+				powerUps.removeActor(powerUp);
+				pool.free(powerUp);
+			}
+		}
 	}
 
 	private void blockController() {
+		for (int i = 0; i < blocks.getChildren().size; i++) {
+			Block block = (Block) blocks.getChildren().get(i);
+			block.update();
+			chaser.collideBlock(block);
+			for (int j = i + 1; j < blocks.getChildren().size; j++) {
+				Block other = (Block) blocks.getChildren().get(j);
+				block.collideBlock(other);
+				other.collideBlock(block);
+			}
+			if (block.isDead()) {
+				blocks.removeActor(block);
+				pool.free(block);
+			}
+		}
+
 		if (Input.MousePressed() && currentBlock == null) {
-			origX = Input.MouseX();
-			origY = Input.MouseY();
-			if (origX < Consts.DrawAreaRight) { // if the clicked area is not
-												// "drawable area"
-				origX = Consts.DrawAreaRight; // put it as the edge of the
-												// drawable area
-			} else if (origX > Consts.ScreenWidth) {
-				origX = Consts.ScreenWidth;
-			}
-			if (origY < 0) { // if clicked area is below the screen
-				origY = 0; // set the Y coord as 0 (bottom of the page)
-			} else if (origY > Consts.ScreenHeight) {
-				origY = Consts.ScreenHeight;
-			}
+			origX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
+					Consts.ScreenWidth);
+			origY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);
 
 			currentBlock = pool.getBlock();
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
+			origX -= Consts.ScreenSpeed;
 
 			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
@@ -108,27 +141,21 @@ public class GameScreen extends AbstractScreen {
 
 			width = Math.abs(newX - origX);
 			height = Math.abs(newY - origY);
-			
+
 			width = MathUtils.clamp(width, minDimSize, Consts.ScreenWidth);
 			height = MathUtils.clamp(height, minDimSize, Consts.ScreenHeight);
-			
-			if(newX > origX)
-			{
+
+			if (newX > origX) {
 				newX = origX + width;
-			}
-			else if(newX < origX)
-			{
+			} else if (newX < origX) {
 				newX = origX - width;
 			}
-			if(newY > origY)
-			{
+			if (newY > origY) {
 				newY = origY + height;
-			}
-			else if(newY < origY)
-			{
+			} else if (newY < origY) {
 				newY = origY - height;
 			}
-			
+
 			if (width * height <= RightGauge) {
 				savedX = newX;
 				savedY = newY;
@@ -140,34 +167,21 @@ public class GameScreen extends AbstractScreen {
 			}
 
 		} else if (Input.MouseReleased() && currentBlock != null) {
-			// if (currentBlock.getWidth() * currentBlock.getHeight() > 500) {
-			if(width * height <= RightGauge)
-			{
-			currentBlock.createBlock();
-			RightGauge -= (width * height);
-			}
-			else if(RightGauge >= 2500)
-			{
+			if (width * height <= RightGauge) {
+				currentBlock.createBlock();
+				RightGauge -= (width * height);
+			} else if (RightGauge >= 2500) {
 				currentBlock.setSize(MaxAWidth, MaxAHeight);
-				currentBlock.setPosition(Math.min(savedX, origX), Math.min(savedY, origY));
+				currentBlock.setPosition(Math.min(savedX, origX),
+						Math.min(savedY, origY));
 				currentBlock.createBlock();
 				RightGauge -= (MaxAWidth * MaxAHeight);
 				MaxAHeight = minDimSize;
 				MaxAWidth = minDimSize;
-				//blocks.removeActor(currentBlock);
-				//pool.free(currentBlock);
+				// blocks.removeActor(currentBlock);
+				// pool.free(currentBlock);
 			}
 			currentBlock = null;
-			// }
-		}
-
-		for (Actor actor : blocks.getChildren()) {
-			Block block = (Block) actor;
-			chaser.collideBlock(block);
-			if (block.isDead()) {
-				blocks.removeActor(block);
-				pool.free(block);
-			}
 		}
 	}
 

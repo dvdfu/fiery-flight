@@ -7,6 +7,7 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class Block extends GameObject {
 	private boolean created;
+	private int createTimer;
 	private boolean dead;
 
 	public Block(GameStage stage) {
@@ -22,55 +23,72 @@ public class Block extends GameObject {
 
 	public void act(float delta) {
 		super.act(delta);
+		setX(getX() - Consts.ScreenSpeed);
 		if (created) {
-			if (getY() <= 0) {
-				ySpeed = 0;
-				setY(0);
-			}
-			else {
-				ySpeed -= Consts.Gravity;
+			if (createTimer > 0) {
+				createTimer--;
 			}
 			if (getRight() < 0) {
 				dead = true;
 			}
 		}
+		if (getY() > 0) {
+			if (created && createTimer == 0) {
+				ySpeed -= Consts.Gravity;
+			}
+		} else {
+			setY(0);
+			ySpeed = 0;
+		}
 	}
-	
+
 	public void draw(Batch batch, float parentAlpha) {
-		batch.setColor(1, 0, 0, 1);
-		super.draw(batch, parentAlpha);
+		if (created) {
+			batch.setColor(1, 1, 1, 1);
+		} else {
+			batch.setColor(1, 1, 1, 0.5f);
+		}
+
+		int size = 16;
+		batch.draw(Sprites.blockTL, getX(), getTop() - size);
+		batch.draw(Sprites.blockTR, getRight() - size, getTop() - size);
+		batch.draw(Sprites.blockBL, getX(), getY());
+		batch.draw(Sprites.blockBR, getRight() - size, getY());
+		batch.draw(Sprites.blockC, getX(), getY() + size, size, getHeight()
+				- size * 2);
+		batch.draw(Sprites.blockC, getRight() - size, getY() + size, size,
+				getHeight() - size * 2);
+		batch.draw(Sprites.blockC, getX() + size, getY(),
+				getWidth() - size * 2, getHeight());
 	}
 
 	public void update() {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+	}
+
+	public boolean isCreated() {
+		return created;
 	}
 
 	public void createBlock() {
 		created = true;
-		xSpeed = -1.5f;
+		createTimer = 60;
 	}
-	
+
 	public void collideBlock(Block block) {
-		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
-			System.out.println(ySpeed + " " + xSpeed);
+		if (bounds.overlaps(block.bounds) && block.created) {
 			if (bounds.getY() < block.getTop() && ySpeed < 0) {
 				ySpeed = 0;
 				setY(block.getTop());
-			} else if (bounds.getTop() > block.getY() && ySpeed > 0) {
-				ySpeed = 0;
-				setY(block.getY() - getHeight());
-			}
-			if (bounds.getX() < block.getRight() && xSpeed < 0) {
-				xSpeed = 0;
-				setX(block.getRight());
-			} else if (bounds.getRight() > block.getX() && xSpeed > 0) {
-				xSpeed = 0;
-				setX(block.getX() - getWidth());
 			}
 		}
 		setBounds();
 	}
-	
+
+	public void setDead() {
+		dead = true;
+	}
+
 	public boolean isDead() {
 		return dead;
 	}
