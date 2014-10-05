@@ -2,15 +2,18 @@ package com.dvdfu.gijam.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.dvdfu.gijam.MainGame;
 import com.dvdfu.gijam.handlers.Consts;
+import com.dvdfu.gijam.handlers.Enums;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.ObjectPool;
 import com.dvdfu.gijam.objects.Background;
 import com.dvdfu.gijam.objects.Block;
 import com.dvdfu.gijam.objects.Chaser;
+import com.dvdfu.gijam.objects.Particle;
 import com.dvdfu.gijam.objects.PowerUp;
 
 public class GameScreen extends AbstractScreen {
@@ -20,6 +23,7 @@ public class GameScreen extends AbstractScreen {
 	private Chaser chaser;
 	private Group blocks;
 	private Group powerUps;
+	private Group particles;
 
 	private Block currentBlock;
 	private float origX;
@@ -56,8 +60,12 @@ public class GameScreen extends AbstractScreen {
 		stage.addActor(chaser);
 		blocks = new Group();
 		stage.addActor(blocks);
+
 		powerUps = new Group();
 		stage.addActor(powerUps);
+
+		particles = new Group();
+		stage.addActor(particles);
 
 		stage.setCamPosition(Gdx.graphics.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2);
@@ -120,8 +128,24 @@ public class GameScreen extends AbstractScreen {
 				other.collideBlock(block);
 			}
 			if (block.isDead()) {
+				for (float j = block.getX(); j < block.getRight(); j += 32) {
+					for (float k = block.getY(); k < block.getTop(); k += 32) {
+						Particle particle = pool.getParticle();
+						particle.setType(Enums.ParticleType.ROCK);
+						particle.setPosition(j, k);
+						particles.addActor(particle);
+					}
+				}
 				blocks.removeActor(block);
 				pool.free(block);
+			}
+		}
+
+		for (Actor actor : particles.getChildren()) {
+			Particle particle = (Particle) actor;
+			if (particle.dead()) {
+				particles.removeActor(actor);
+				pool.free(particle);
 			}
 		}
 

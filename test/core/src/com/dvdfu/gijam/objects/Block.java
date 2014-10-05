@@ -19,6 +19,7 @@ public class Block extends GameObject {
 	public void reset() {
 		created = false;
 		dead = false;
+		ySpeed = 0;
 	}
 
 	public void act(float delta) {
