@@ -28,7 +28,7 @@ public class GameScreen extends AbstractScreen {
 	private float newX;
 	private float newY;
 
-	private int powerUpCounter = MathUtils.random(600, 1200);
+	private int powerUpCounter = MathUtils.random(300, 600);
 
 	public GameScreen(MainGame game) {
 		super(game);
@@ -64,9 +64,17 @@ public class GameScreen extends AbstractScreen {
 		} else {
 			PowerUp powerUp = pool.getPowerUp();
 			powerUps.addActor(powerUp);
-			powerUp.setPosition(Consts.ScreenWidth,
-					MathUtils.random(10, Consts.ScreenHeight - 10));
-			powerUpCounter = MathUtils.random(600, 1200);
+			powerUpCounter = MathUtils.random(300, 600);
+		}
+		
+		for (int i = 0; i < powerUps.getChildren().size; i++) {
+			PowerUp powerUp = (PowerUp) powerUps.getChildren().get(i);
+			powerUp.update();
+			chaser.collidePowerUp(powerUp);
+			if (powerUp.isDead()) {
+				powerUps.removeActor(powerUp);
+				pool.free(powerUp);
+			}
 		}
 	}
 
@@ -85,7 +93,7 @@ public class GameScreen extends AbstractScreen {
 				pool.free(block);
 			}
 		}
-		
+
 		if (Input.MousePressed() && currentBlock == null) {
 			origX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
