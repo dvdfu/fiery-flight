@@ -8,7 +8,7 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class PowerUp extends GameObject {
 	private boolean dead;
-	public int type;
+	private int type;
 
 	public PowerUp(GameStage stage) {
 		super(stage);
@@ -46,7 +46,11 @@ public class PowerUp extends GameObject {
 	public void update() {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 	}
-	
+
+	public int getType() {
+		return type;
+	}
+
 	public void setDead() {
 		dead = true;
 	}
