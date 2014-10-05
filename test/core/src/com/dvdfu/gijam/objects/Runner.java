@@ -8,21 +8,21 @@ import com.dvdfu.gijam.visuals.Sprites;
 
 public class Runner extends GameObject {
 	private int gameTime = 0;
-	
+
 	private float minX = Consts.ScreenWidth + 1000;
 	private float minY = 200;
 	private float maxX = Consts.ScreenWidth + 1000;
 	private float maxY = Consts.ScreenHeight - 200;
-	
-	private boolean moving, moveLeft, moveRight, moveUp, moveDown;
-	
-	private float moveMax = 5;
-	private float moveSpeed = 0.3f;
 
-	private float jumpSpeed = 7;
+	private boolean moving, moveLeft, moveRight, moveUp, moveDown;
+
+	private float moveMax = 6;
+	private float moveSpeed = 0.5f;
+
+	private float jumpSpeed = 10;
 
 	private boolean dashing;
-	private int moveCounter;
+	private int moveCounter = -5;
 	private float dashSpeedX, dashSpeedY;
 
 	public Runner(GameStage stage) {
@@ -39,11 +39,20 @@ public class Runner extends GameObject {
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
+		if (bounds.overlaps(block.bounds) && block.isCreated()) {
 			block.setDead();
 		}
 	}
 
+	public void collideChaser(Chaser chaser) {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(chaser.bounds)) {
+			if (chaser.isDashing()) {
+				//win
+			}
+		}
+	}
+	
 	public void draw(Batch batch, float parentAlpha) {
 		batch.setColor(1, 1, 1, 1);
 		super.draw(batch, parentAlpha);
@@ -60,20 +69,19 @@ public class Runner extends GameObject {
 	}
 
 	public void move() {
-		if (gameTime == 1800) {
-			minX = 600;
-			maxX = Consts.ScreenWidth - 200;
+		if (gameTime == 900) {
+			minX = 700;
+			maxX = Consts.ScreenWidth - 100;
 		}
-		
-		if (!moving) {
+
+		if (!moving && moveCounter == -5) {
 			if (getX() < minX) {
 				moveLeft = false;
 				moveRight = true;
 			} else if (getX() > maxX) {
 				moveLeft = true;
 				moveRight = false;
-			}
-			else {
+			} else {
 				moveRight = false;
 				moveRight = false;
 			}
@@ -83,82 +91,81 @@ public class Runner extends GameObject {
 			} else if (getY() > maxY) {
 				moveUp = false;
 				moveDown = true;
-			}
-			else {
+			} else {
 				moveUp = false;
 				moveDown = false;
 			}
+			moveCounter = 20;
 		}
-		
+
 		if (!dashing) {
 			ySpeed -= Consts.Gravity;
 		}
 
-		if (!moving && MathUtils.random(0, 1) == 1) {
-			xSpeed = 0;
-			ySpeed = 0;
-			dashing = true;
-			moving = true;
-			moveCounter = 20;
-			if (moveUp) {
-				dashSpeedY = 2f;
-			} else if (moveDown) {
-				dashSpeedY = -2f;
-			} else {
-				dashSpeedY = MathUtils.random(-2, 2);
+		if (moveCounter > 0) {
+			if (!moving && MathUtils.random(0, 3) == 1) {
+				xSpeed = 0;
+				ySpeed = 0;
+				dashing = true;
+				moving = true;
+				if (moveUp) {
+					dashSpeedY = 1f;
+				} else if (moveDown) {
+					dashSpeedY = -1f;
+				} else {
+					dashSpeedY = MathUtils.random(-1, 1);
+				}
+				if (moveRight) {
+					dashSpeedX = 1f;
+				} else if (moveLeft) {
+					dashSpeedX = -1f;
+				} else {
+					dashSpeedX = MathUtils.random(-1, 1);
+				}
 			}
-			if (moveRight) {
-				dashSpeedX = 2f;
-			} else if (moveLeft) {
-				dashSpeedX = -2f;
+
+			if (dashing) {
+				if (moveCounter > 10) {
+					xSpeed += dashSpeedX;
+					ySpeed += dashSpeedY;
+				} else if (moveCounter <= 8) {
+					xSpeed -= dashSpeedX;
+					if (getY() > 0) {
+						ySpeed -= dashSpeedY;
+					}
+				}
 			} else {
-				dashSpeedX = MathUtils.random(-2, 2);
+				if (!moving) {
+					if (moveUp || (!moveDown && MathUtils.random(0, 2) == 1)) {
+						ySpeed = jumpSpeed;
+					}
+					moving = true;
+				}
+				if (moveRight || (!moveLeft && MathUtils.random(0,3) == 1)) {
+					if (xSpeed < moveMax) {
+						xSpeed += moveSpeed;
+					} else
+						xSpeed = moveMax;
+				} else if (xSpeed > 0) {
+					xSpeed -= moveSpeed;
+				}
+				if (moveLeft || (!moveRight && MathUtils.random(0,1) == 1)) {
+					if (xSpeed > -moveMax) {
+						xSpeed -= moveSpeed;
+					} else
+						xSpeed = -moveMax;
+				} else if (xSpeed < 0) {
+					xSpeed += moveSpeed;
+				}
+				if (xSpeed > -moveSpeed && xSpeed < moveSpeed) {
+					xSpeed = 0;
+				}
 			}
 		}
-
-		if (dashing) {
-			if (moveCounter > 10) {
-				xSpeed += dashSpeedX;
-				ySpeed += dashSpeedY;
-			} else if (moveCounter <= 8) {
-				xSpeed -= dashSpeedX;
-				if (getY() > 0) {
-					ySpeed -= dashSpeedY;
-				}
-			}
-			moveCounter--;
-			if (moveCounter == 0) {
-				moving = false;
-				dashing = false;
-			}
-		} else {
-			if (!moving) {
-				if (moveUp || (!moveDown && MathUtils.random(0, 1) == 1)) {
-					ySpeed = jumpSpeed;
-				}
-				moveCounter = 20;
-				moving = true;
-			}
-			if (moveRight) {
-				if (xSpeed < moveMax) {
-					xSpeed += moveSpeed;
-				} else
-					xSpeed = moveMax;
-			} else if (xSpeed > 0) {
-				xSpeed -= moveSpeed;
-			}
-			if (moveLeft) {
-				if (xSpeed > -moveMax) {
-					xSpeed -= moveSpeed;
-				} else
-					xSpeed = -moveMax;
-			} else if (xSpeed < 0) {
-				xSpeed += moveSpeed;
-			}
-			moveCounter--;
-			if (moveCounter == 0) {
-				moving = false;
-			}
+		moveCounter--;
+		if (moveCounter == 0) {
+			moving = false;
+			dashing = false;
 		}
 	}
 }

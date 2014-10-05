@@ -110,6 +110,7 @@ public class GameScreen extends AbstractScreen {
 		bg.update();
 		chaser.update();
 		runner.update();
+		runner.collideChaser(chaser);
 		powerUpController();
 		blockController();
 		stage.act(delta);

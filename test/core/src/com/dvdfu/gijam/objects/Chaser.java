@@ -199,4 +199,8 @@ public class Chaser extends GameObject {
 			}
 		}
 	}
+	
+	public boolean isDashing() {
+		return dashing;
+	}
 }
