@@ -10,7 +10,6 @@ public class Chaser extends GameObject {
 	private float moveMax = 5;
 	private float moveSpeed = 0.3f;
 
-	private boolean grounded, groundedBuffer;
 	private int jumpsMax = 2;
 	private int jumpsLeft = jumpsMax;
 	private float jumpSpeed = 7;
@@ -31,9 +30,9 @@ public class Chaser extends GameObject {
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(block.bounds) && block.isCreated()) {
+			block.setDead();
 			if (getY() >= block.getTop()) {
 				setY(block.getTop());
-				groundedBuffer = true;
 				jumpsLeft = jumpsMax;
 				ySpeed = 0;
 			} else if (getTop() <= block.getY()) {
@@ -66,7 +65,6 @@ public class Chaser extends GameObject {
 	}
 
 	public void act(float delta) {
-		grounded = groundedBuffer;
 		setX(getX() - Consts.ScreenSpeed);
 		super.act(delta);
 	}
@@ -85,7 +83,7 @@ public class Chaser extends GameObject {
 
 	public void move() {
 		ySpeed -= Consts.Gravity;
-		
+
 		if (currentPowerUp != 0) {
 			if (powerUpCounter == 0) {
 				currentPowerUp = 0;
@@ -94,9 +92,8 @@ public class Chaser extends GameObject {
 				powerUpCounter--;
 			}
 			if (currentPowerUp == 1) {
-				
-			}
-			else if (currentPowerUp == 2) {
+
+			} else if (currentPowerUp == 2) {
 				jumpSpeed = 10f;
 			}
 		}
@@ -105,8 +102,6 @@ public class Chaser extends GameObject {
 			ySpeed = jumpSpeed;
 			jumpsLeft--;
 		}
-		grounded = getY() <= 0;
-		groundedBuffer = false;
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (xSpeed < moveMax) {
