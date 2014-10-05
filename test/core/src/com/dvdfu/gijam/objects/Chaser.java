@@ -25,21 +25,16 @@ public class Chaser extends GameObject {
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
-			System.out.println(ySpeed + " " + xSpeed);
-			if (bounds.getY() < block.getTop() && ySpeed < 0) {
+			if (bounds.getY() <= block.getTop() && ySpeed < 0) {
 				ySpeed = 0;
 				jumpsLeft = jumpsMax;
 				setY(block.getTop());
-			} else if (bounds.getTop() > block.getY() && ySpeed > 0) {
-				ySpeed = 0;
-				setY(block.getY() - getHeight());
-			}
-			if (bounds.getX() < block.getRight() && xSpeed < 0) {
+			} else if (bounds.getX() <= block.getRight() && xSpeed < 0) {
 				xSpeed = 0;
-				setX(block.getRight());
-			} else if (bounds.getRight() > block.getX() && xSpeed > 0) {
+				setX(block.getRight() + block.getXSpeed());
+			} else if (bounds.getRight() >= block.getX() && xSpeed >= 0) {
 				xSpeed = 0;
-				setX(block.getX() - getWidth());
+				setX(block.getX() - getWidth() + block.getXSpeed());
 			}
 		}
 		setBounds();

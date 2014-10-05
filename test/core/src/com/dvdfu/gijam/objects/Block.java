@@ -18,6 +18,7 @@ public class Block extends GameObject {
 	public void reset() {
 		created = false;
 		dead = false;
+		setBounds();
 	}
 
 	public void act(float delta) {
@@ -37,11 +38,17 @@ public class Block extends GameObject {
 	}
 	
 	public void draw(Batch batch, float parentAlpha) {
-		batch.setColor(1, 0, 0, 1);
-		super.draw(batch, parentAlpha);
+		int size = 16;
+		batch.draw(Sprites.blockTL, getX(), getTop() - size);
+		batch.draw(Sprites.blockTR, getRight() - size, getTop() - size);
+		batch.draw(Sprites.blockBL, getX(), getY());
+		batch.draw(Sprites.blockBR, getRight() - size, getY());
+		batch.draw(Sprites.blockC, getX(), getY() + size, getWidth(), getHeight() - size * 2);
+		batch.draw(Sprites.blockC, getX() + size, getY(), getWidth() - size * 2, getHeight());
 	}
 
 	public void update() {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 	}
 
 	public void createBlock() {
@@ -50,22 +57,10 @@ public class Block extends GameObject {
 	}
 	
 	public void collideBlock(Block block) {
-		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
-			System.out.println(ySpeed + " " + xSpeed);
+		if (bounds.overlaps(block.bounds) && block.created) {
 			if (bounds.getY() < block.getTop() && ySpeed < 0) {
 				ySpeed = 0;
 				setY(block.getTop());
-			} else if (bounds.getTop() > block.getY() && ySpeed > 0) {
-				ySpeed = 0;
-				setY(block.getY() - getHeight());
-			}
-			if (bounds.getX() < block.getRight() && xSpeed < 0) {
-				xSpeed = 0;
-				setX(block.getRight());
-			} else if (bounds.getRight() > block.getX() && xSpeed > 0) {
-				xSpeed = 0;
-				setX(block.getX() - getWidth());
 			}
 		}
 		setBounds();

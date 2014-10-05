@@ -5,8 +5,50 @@ filter: Nearest,Nearest
 repeat: none
 blank
   rotate: false
-  xy: 1, 1
+  xy: 1, 19
   size: 32, 32
   orig: 32, 32
+  offset: 0, 0
+  index: -1
+boulder
+  rotate: false
+  xy: 35, 19
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+block-tl
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+block-tr
+  rotate: false
+  xy: 69, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+block-main
+  rotate: false
+  xy: 19, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+block-br
+  rotate: false
+  xy: 87, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+block-bl
+  rotate: false
+  xy: 37, 1
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1

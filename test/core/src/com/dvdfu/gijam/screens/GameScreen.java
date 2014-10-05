@@ -1,7 +1,7 @@
 package com.dvdfu.gijam.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.dvdfu.gijam.MainGame;
 import com.dvdfu.gijam.handlers.Consts;
@@ -48,54 +48,33 @@ public class GameScreen extends AbstractScreen {
 
 	private void blockController() {
 		if (Input.MousePressed() && currentBlock == null) {
-			origX = Input.MouseX();
-			origY = Input.MouseY();
-			if (origX < Consts.DrawAreaRight) { // if the clicked area is not
-												// "drawable area"
-				origX = Consts.DrawAreaRight; // put it as the edge of the
-												// drawable area
-			} else if (origX > Consts.ScreenWidth) {
-				origX = Consts.ScreenWidth;
-			}
-			if (origY < 0) { // if clicked area is below the screen
-				origY = 0; // set the Y coord as 0 (bottom of the page)
-			} else if (origY > Consts.ScreenHeight) {
-				origY = Consts.ScreenHeight;
-			}
+			origX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight, Consts.ScreenWidth);
+			origY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);
 
 			currentBlock = pool.getBlock();
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
-			newX = Input.MouseX();
-			newY = Input.MouseY();
-
-			if (newX < Consts.DrawAreaRight) { // if new selection goes below
-												// half of the screen
-				newX = Consts.DrawAreaRight; // set it on the edge of the screen
-			} else if (newX > Consts.ScreenWidth) {
-				newX = Consts.ScreenWidth;
-			}
-			if (newY < 0) { // if new selection Y-coord goes below the screen
-				newY = 0; // set it on the edge of the screen
-			} else if (newY > Consts.ScreenHeight) {
-				newY = Consts.ScreenHeight;
-			}
+			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight, Consts.ScreenWidth);
+			newY = MathUtils.clamp(Input.MouseY(), 0, Consts.ScreenHeight);
 
 			float width = Math.abs(newX - origX);
 			float height = Math.abs(newY - origY);
-			currentBlock.setPosition(Math.min(newX, origX),
-					Math.min(newY, origY));
+			currentBlock.setPosition(Math.min(newX, origX), Math.min(newY, origY));
 			currentBlock.setSize(width, height);
 		} else if (Input.MouseReleased() && currentBlock != null) {
-			// if (currentBlock.getWidth() * currentBlock.getHeight() > 500) {
 			currentBlock.createBlock();
 			currentBlock = null;
-			// }
 		}
 
-		for (Actor actor : blocks.getChildren()) {
-			Block block = (Block) actor;
+		for (int i = 0; i < blocks.getChildren().size; i++) {
+			Block block = (Block) blocks.getChildren().get(i);
+			block.update();
 			chaser.collideBlock(block);
+			for (int j = i + 1; j < blocks.getChildren().size; j++) {
+				Block other = (Block) blocks.getChildren().get(j);
+				block.collideBlock(other);
+				other.collideBlock(block);
+			}
 			if (block.isDead()) {
 				blocks.removeActor(block);
 				pool.free(block);
