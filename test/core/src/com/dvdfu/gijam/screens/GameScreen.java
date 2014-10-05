@@ -7,12 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.dvdfu.gijam.MainGame;
 import com.dvdfu.gijam.handlers.Consts;
 import com.dvdfu.gijam.handlers.Enums;
+import com.dvdfu.gijam.handlers.Enums.ParticleType;
 import com.dvdfu.gijam.handlers.GameStage;
 import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.ObjectPool;
 import com.dvdfu.gijam.objects.Background;
 import com.dvdfu.gijam.objects.Block;
 import com.dvdfu.gijam.objects.Chaser;
+import com.dvdfu.gijam.objects.Fireball;
 import com.dvdfu.gijam.objects.Particle;
 import com.dvdfu.gijam.objects.PowerUp;
 
@@ -24,6 +26,7 @@ public class GameScreen extends AbstractScreen {
 	private Group blocks;
 	private Group powerUps;
 	private Group particles;
+	private Group fireballs;
 
 	private Block currentBlock;
 	private float origX;
@@ -34,10 +37,10 @@ public class GameScreen extends AbstractScreen {
 	private float savedX;
 	private float savedY;
 
-	private float MaxLeftG = 500f;
-	private float MaxRightG = 40000f;
-	private float LeftGauge = 500f;
-	private float RightGauge = 40000f;
+	private float playerMeterMax = 500;
+	private float playerMeter = playerMeterMax;
+	private float blockMeterMax = 400000;
+	private float blockMeter = blockMeterMax;
 
 	private float width;
 	private float height;
@@ -48,6 +51,7 @@ public class GameScreen extends AbstractScreen {
 	private float minDimSize = 50f;
 
 	private int powerUpCounter = MathUtils.random(300, 600);
+	private int fireballCounter;
 
 	public GameScreen(MainGame game) {
 		super(game);
@@ -57,9 +61,16 @@ public class GameScreen extends AbstractScreen {
 		stage.addActor(bg);
 
 		chaser = new Chaser(stage);
+		chaser.setPosition(200, 200);
 		stage.addActor(chaser);
 		blocks = new Group();
 		stage.addActor(blocks);
+
+		Block newBlock = pool.getBlock();
+		newBlock.setSize(500, 200);
+		newBlock.setY(-40);
+		newBlock.createBlock();
+		blocks.addActor(newBlock);
 
 		powerUps = new Group();
 		stage.addActor(powerUps);
@@ -67,19 +78,30 @@ public class GameScreen extends AbstractScreen {
 		particles = new Group();
 		stage.addActor(particles);
 
+		fireballs = new Group();
+		stage.addActor(fireballs);
+
 		stage.setCamPosition(Gdx.graphics.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2);
 	}
 
 	public void render(float delta) {
-
-		if (RightGauge < 0) {
-			RightGauge = 0;
-		} else if (RightGauge > MaxRightG) {
-			RightGauge = MaxRightG;
+		if (fireballCounter > 0) {
+			fireballCounter--;
+		} else {
+			Fireball fireball = pool.getFireball();
+			fireball.setPosition(Input.MouseX(), Input.MouseY());
+			fireballs.addActor(fireball);
+			fireballCounter = 1;
+		}
+		
+		if (blockMeter < 0) {
+			blockMeter = 0;
+		} else if (blockMeter > blockMeterMax) {
+			blockMeter = blockMeterMax;
 		}
 		GaugeController();
-		System.out.println(LeftGauge + " : " + RightGauge);
+		System.out.println(playerMeter + " : " + blockMeter);
 		bg.update();
 		chaser.update();
 		powerUpController();
@@ -89,11 +111,11 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	private void GaugeController() {
-		if (LeftGauge < MaxLeftG) {
-			LeftGauge += 0.05f;
+		if (playerMeter < playerMeterMax) {
+			playerMeter += 0.05f;
 		}
-		if (RightGauge < MaxRightG) {
-			RightGauge += 50f;
+		if (blockMeter < blockMeterMax) {
+			blockMeter += 50f;
 		}
 	}
 
@@ -136,8 +158,10 @@ public class GameScreen extends AbstractScreen {
 						particles.addActor(particle);
 					}
 				}
+				blockMeter += block.getWidth() * block.getHeight();
 				blocks.removeActor(block);
 				pool.free(block);
+				i--;
 			}
 		}
 
@@ -147,6 +171,20 @@ public class GameScreen extends AbstractScreen {
 				particles.removeActor(actor);
 				pool.free(particle);
 			}
+		}
+
+		for (Actor actor : fireballs.getChildren()) {
+			Fireball fireball = (Fireball) actor;
+			fireball.target(chaser.getX(), chaser.getY());
+			if (fireball.isDead()) {
+				fireballs.removeActor(actor);
+				pool.free(fireball);
+			}
+			
+			Particle particle = pool.getParticle();
+			particle.setPosition(fireball.getX(), fireball.getY());
+			particle.setType(ParticleType.FIRE);
+			particles.addActor(particle);
 		}
 
 		if (Input.MousePressed() && currentBlock == null) {
@@ -180,7 +218,7 @@ public class GameScreen extends AbstractScreen {
 				newY = origY - height;
 			}
 
-			if (width * height <= RightGauge) {
+			if (width * height <= blockMeter) {
 				savedX = newX;
 				savedY = newY;
 				MaxAHeight = height;
@@ -191,15 +229,15 @@ public class GameScreen extends AbstractScreen {
 			}
 
 		} else if (Input.MouseReleased() && currentBlock != null) {
-			if (width * height <= RightGauge) {
+			if (width * height <= blockMeter) {
 				currentBlock.createBlock();
-				RightGauge -= (width * height);
-			} else if (RightGauge >= 2500) {
+				blockMeter -= (width * height);
+			} else if (blockMeter >= 2500) {
 				currentBlock.setSize(MaxAWidth, MaxAHeight);
 				currentBlock.setPosition(Math.min(savedX, origX),
 						Math.min(savedY, origY));
 				currentBlock.createBlock();
-				RightGauge -= (MaxAWidth * MaxAHeight);
+				blockMeter -= (MaxAWidth * MaxAHeight);
 				MaxAHeight = minDimSize;
 				MaxAWidth = minDimSize;
 				// blocks.removeActor(currentBlock);

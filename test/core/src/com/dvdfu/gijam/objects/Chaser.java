@@ -18,20 +18,23 @@ public class Chaser extends GameObject {
 
 	public Chaser(GameStage stage) {
 		super(stage);
+		stretched = true;
 		setSprite(Sprites.chaser);
 		reset();
 	}
 
 	public void reset() {
 		setPosition(0, 0);
-		setSize(32, 32);
+		setSize(48, 48);
 	}
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds) && block.isCreated()) {
-			block.setDead();
+		if (bounds.overlaps(block.bounds)) {
 			if (getY() >= block.getTop()) {
+				if (Input.KeyDown(Input.ARROW_UP)) {
+					block.setDead();
+				}
 				setY(block.getTop());
 				jumpsLeft = jumpsMax;
 				ySpeed = 0;
@@ -70,14 +73,14 @@ public class Chaser extends GameObject {
 	}
 
 	public void update() {
-		if (getX() < 0) {
-			setX(0);
-		}
-		if (getY() <= 0) {
-			ySpeed = 0;
-			jumpsLeft = jumpsMax;
-			setY(0);
-		}
+		// if (getX() < 0) {
+		// setX(0);
+		// }
+		// if (getY() <= 0) {
+		// ySpeed = 0;
+		// jumpsLeft = jumpsMax;
+		// setY(0);
+		// }
 		move();
 	}
 

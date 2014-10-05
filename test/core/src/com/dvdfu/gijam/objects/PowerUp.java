@@ -13,7 +13,7 @@ public class PowerUp extends GameObject {
 	public PowerUp(GameStage stage) {
 		super(stage);
 		stretched = true;
-		setSprite(Sprites.chaser);
+		setSprite(Sprites.blank, 16, 16);
 		reset();
 	}
 

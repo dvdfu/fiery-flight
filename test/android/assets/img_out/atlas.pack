@@ -10,51 +10,58 @@ mountains
   orig: 400, 400
   offset: 0, 0
   index: -1
-blank
+player_run_r
   rotate: false
-  xy: 1, 37
-  size: 32, 32
-  orig: 32, 32
+  xy: 1, 53
+  size: 64, 16
+  orig: 64, 16
   offset: 0, 0
   index: -1
-boulder
+blank
   rotate: false
   xy: 403, 439
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-block-tl
+boulder
   rotate: false
   xy: 1, 19
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+block-tl
+  rotate: false
+  xy: 67, 53
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-tr
   rotate: false
-  xy: 35, 53
+  xy: 403, 421
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-main
   rotate: false
-  xy: 403, 421
+  xy: 437, 455
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-br
   rotate: false
-  xy: 437, 455
+  xy: 1, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 block-bl
   rotate: false
-  xy: 1, 1
+  xy: 35, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
