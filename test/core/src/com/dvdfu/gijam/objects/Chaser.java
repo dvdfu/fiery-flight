@@ -59,6 +59,14 @@ public class Chaser extends GameObject {
 		setBounds();
 	}
 
+	public float getMeter()
+	{
+		return playerMeter;
+	}
+	public float getMaxMeter()
+	{
+		return playerMeterMax;
+	}
 	public void collidePowerUp(PowerUp powerUp) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(powerUp.bounds)) {
