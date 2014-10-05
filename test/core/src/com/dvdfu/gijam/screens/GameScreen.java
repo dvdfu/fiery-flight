@@ -17,12 +17,14 @@ import com.dvdfu.gijam.objects.Chaser;
 import com.dvdfu.gijam.objects.Fireball;
 import com.dvdfu.gijam.objects.Particle;
 import com.dvdfu.gijam.objects.PowerUp;
+import com.dvdfu.gijam.objects.Runner;
 
 public class GameScreen extends AbstractScreen {
 	private GameStage stage;
 	private Background bg;
 	private ObjectPool pool;
 	private Chaser chaser;
+	private Runner runner;
 	private Group blocks;
 	private Group powerUps;
 	private Group particles;
@@ -62,6 +64,10 @@ public class GameScreen extends AbstractScreen {
 		chaser = new Chaser(stage);
 		chaser.setPosition(200, 200);
 		stage.addActor(chaser);
+		runner = new Runner(stage);
+		runner.setPosition(500, 200);
+		stage.addActor(runner);
+		
 		blocks = new Group();
 		stage.addActor(blocks);
 
@@ -103,6 +109,7 @@ public class GameScreen extends AbstractScreen {
 		//System.out.println(playerMeter + " : " + blockMeter);
 		bg.update();
 		chaser.update();
+		runner.update();
 		powerUpController();
 		blockController();
 		if (chaser.isDead()) {
@@ -144,6 +151,7 @@ public class GameScreen extends AbstractScreen {
 			Block block = (Block) blocks.getChildren().get(i);
 			block.update();
 			chaser.collideBlock(block);
+			runner.collideBlock(block);
 			for (Actor actor : fireballs.getChildren()) {
 				Fireball fireball = (Fireball) actor;
 				fireball.collideBlock(block);
