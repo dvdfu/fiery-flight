@@ -13,6 +13,7 @@ import com.dvdfu.gijam.handlers.Input;
 import com.dvdfu.gijam.handlers.ObjectPool;
 import com.dvdfu.gijam.objects.Background;
 import com.dvdfu.gijam.objects.Block;
+import com.dvdfu.gijam.objects.Gauge;
 import com.dvdfu.gijam.objects.RandomBlock;
 import com.dvdfu.gijam.objects.Chaser;
 import com.dvdfu.gijam.objects.Fireball;
@@ -32,6 +33,10 @@ public class GameScreen extends AbstractScreen {
 	private Group fireballs;
 	private int deadTimer;
 	private Group randomblocks;
+	private Group gauges;
+
+	private Gauge chasergauge;
+	private Gauge boxgauge;
 
 	private Block currentBlock;
 	private RandomBlock curRanBlock;
@@ -43,7 +48,7 @@ public class GameScreen extends AbstractScreen {
 	private float savedX;
 	private float savedY;
 
-	private float blockMeterMax = 400000;
+	private float blockMeterMax = 16000;
 	private float blockMeter = blockMeterMax;
 
 	private float width;
@@ -78,6 +83,18 @@ public class GameScreen extends AbstractScreen {
 		blocks = new Group();
 		stage.addActor(blocks);
 
+		gauges = new Group();
+		stage.addActor(gauges);
+
+		chasergauge = new Gauge(stage);
+		boxgauge = new Gauge(stage);
+
+		chasergauge.setPosition(10, Consts.ScreenHeight / 2);
+		boxgauge.setPosition(Consts.ScreenWidth - 40, Consts.ScreenHeight / 2);
+
+		gauges.addActor(chasergauge);
+		gauges.addActor(boxgauge);
+
 		Block newBlock = pool.getBlock();
 		newBlock.setSize(500, 200);
 		newBlock.setY(-40);
@@ -103,7 +120,7 @@ public class GameScreen extends AbstractScreen {
 	public void render(float delta) {
 		if (deadTimer == 0) {
 			if (fireballCounter > 0) {
-				//fireballCounter--;
+				// fireballCounter--;
 			} else {
 				Fireball fireball = pool.getFireball();
 				fireball.setPosition(runner.getCX(), runner.getCY());
@@ -118,6 +135,10 @@ public class GameScreen extends AbstractScreen {
 			}
 			GaugeController();
 			// System.out.println(playerMeter + " : " + blockMeter);
+			boxgauge.setHeight((blockMeter * 150) / blockMeterMax);
+			chasergauge.setHeight(chaser.getMeter() * 150
+					/ chaser.getMaxMeter());
+			bg.update();
 			bg.update();
 			chaser.update();
 			randomBlockGen();
@@ -139,6 +160,7 @@ public class GameScreen extends AbstractScreen {
 				game.exitScreen();
 			}
 		}
+
 		stage.draw();
 	}
 

@@ -66,6 +66,14 @@ public class Chaser extends GameObject {
 		}
 	}
 
+	public float getMeter()
+	{
+		return playerMeter;
+	}
+	public float getMaxMeter()
+	{
+		return playerMeterMax;
+	}
 	public void collidePowerUp(PowerUp powerUp) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(powerUp.bounds)) {
@@ -168,8 +176,10 @@ public class Chaser extends GameObject {
 				xSpeed += dashSpeedX;
 				ySpeed += dashSpeedY;
 			} else if (dashCounter <= 8) {
-				xSpeed -= dashSpeedX;
-				if (getY() > 0) {
+				if (xSpeed != 0) {
+					xSpeed -= dashSpeedX;
+				}
+				if (ySpeed != 0) {
 					ySpeed -= dashSpeedY;
 				}
 			}
