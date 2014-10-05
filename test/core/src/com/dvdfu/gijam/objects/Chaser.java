@@ -41,7 +41,7 @@ public class Chaser extends GameObject {
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
+		if (bounds.overlaps(block.bounds) && block.isCreated()) {
 			if (getY() >= block.getTop()) {
 				setY(block.getTop());
 				jumpsLeft = jumpsMax;
@@ -59,6 +59,11 @@ public class Chaser extends GameObject {
 			}
 		}
 		setBounds();
+		if (bounds.overlaps(block.bounds) && block.isCreated()) {
+			setY(block.getTop());
+			jumpsLeft = jumpsMax;
+			ySpeed = 0;
+		}
 	}
 
 	public void collidePowerUp(PowerUp powerUp) {
@@ -67,6 +72,12 @@ public class Chaser extends GameObject {
 			currentPowerUp = powerUp.getType();
 			powerUpCounter = 300;
 			powerUp.setDead();
+		}
+	}
+
+	public void collideFireball(Fireball fireball) {
+		if (bounds.overlaps(fireball.bounds)) {
+			dead = true;
 		}
 	}
 
@@ -81,7 +92,7 @@ public class Chaser extends GameObject {
 	}
 	
 	public boolean isDead() {
-		return getTop() < 0;
+		return getTop() < 0 || dead;
 	}
 
 	public void update() {

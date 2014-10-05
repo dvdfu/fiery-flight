@@ -29,6 +29,7 @@ public class GameScreen extends AbstractScreen {
 	private Group powerUps;
 	private Group particles;
 	private Group fireballs;
+	private int deadTimer;
 
 	private Block currentBlock;
 	private float origX;
@@ -38,7 +39,6 @@ public class GameScreen extends AbstractScreen {
 	private float newY;
 	private float savedX;
 	private float savedY;
-
 
 	private float blockMeterMax = 400000;
 	private float blockMeter = blockMeterMax;
@@ -67,7 +67,7 @@ public class GameScreen extends AbstractScreen {
 		runner = new Runner(stage);
 		runner.setPosition(500, 200);
 		stage.addActor(runner);
-		
+
 		blocks = new Group();
 		stage.addActor(blocks);
 
@@ -91,32 +91,39 @@ public class GameScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
-		if (fireballCounter > 0) {
-			fireballCounter--;
-		} else {
-			Fireball fireball = pool.getFireball();
-			fireball.setPosition(Consts.ScreenWidth, MathUtils.random(Consts.ScreenHeight/2,400));
-			fireballs.addActor(fireball);
-			fireballCounter = MathUtils.random(100, 300);
+		if (deadTimer == 0) {
+			if (fireballCounter > 0) {
+				fireballCounter--;
+			} else {
+				Fireball fireball = pool.getFireball();
+				fireball.setPosition(runner.getCX(), runner.getCY());
+				fireballs.addActor(fireball);
+				fireballCounter = 60 + MathUtils.random(60);
+			}
+
+			if (blockMeter < 0) {
+				blockMeter = 0;
+			} else if (blockMeter > blockMeterMax) {
+				blockMeter = blockMeterMax;
+			}
+			GaugeController();
+			// System.out.println(playerMeter + " : " + blockMeter);
+			bg.update();
+			chaser.update();
+			runner.update();
+			powerUpController();
+			blockController();
+			if (chaser.isDead()) {
+				deadTimer = 100;
+			}
+
+			stage.act(delta);
+		} else if (deadTimer > 0) {
+			deadTimer--;
+			if (deadTimer == 0) {
+				game.exitScreen();
+			}
 		}
-		
-		if (blockMeter < 0) {
-			blockMeter = 0;
-		} else if (blockMeter > blockMeterMax) {
-			blockMeter = blockMeterMax;
-		}
-		GaugeController();
-		//System.out.println(playerMeter + " : " + blockMeter);
-		bg.update();
-		chaser.update();
-		runner.update();
-		powerUpController();
-		blockController();
-		if (chaser.isDead()) {
-			game.exitScreen();
-		}
-		
-		stage.act(delta);
 		stage.draw();
 	}
 
@@ -188,9 +195,11 @@ public class GameScreen extends AbstractScreen {
 		for (Actor actor : fireballs.getChildren()) {
 			Fireball fireball = (Fireball) actor;
 			fireball.target(chaser.getX(), chaser.getY());
+			chaser.collideFireball(fireball);
 			for (int i = 0; i < 4; i++) {
 				Particle particle = pool.getParticle();
-				particle.setPosition(fireball.getX(), fireball.getY());
+				particle.setPosition(fireball.getCX() - 12,
+						fireball.getCY() - 12);
 				particle.setType(ParticleType.FIRE);
 				particles.addActor(particle);
 			}
@@ -209,7 +218,7 @@ public class GameScreen extends AbstractScreen {
 			blocks.addActor(currentBlock);
 		} else if (Input.MouseDown() && currentBlock != null) {
 			origX -= Consts.ScreenSpeed;
-			savedX -=Consts.ScreenSpeed;
+			savedX -= Consts.ScreenSpeed;
 
 			newX = MathUtils.clamp(Input.MouseX(), Consts.DrawAreaRight,
 					Consts.ScreenWidth);
@@ -260,13 +269,13 @@ public class GameScreen extends AbstractScreen {
 			height = 0;
 			width = 0;
 			origX = 0;
-			origY =0;
+			origY = 0;
 			newX = 0;
-			newY =0;
+			newY = 0;
 			savedX = 0;
-			savedY =0;
-			MaxAWidth =0;
-			MaxAHeight=0;
+			savedY = 0;
+			MaxAWidth = 0;
+			MaxAHeight = 0;
 			currentBlock = null;
 		}
 	}

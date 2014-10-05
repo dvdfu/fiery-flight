@@ -23,14 +23,8 @@ public class Fireball extends GameObject {
 
 	public void act(float delta) {
 		float theta = MathUtils.atan2(targetY - getY(), targetX - getX());
-		xSpeed = MathUtils.cos(theta) * 4;
-		ySpeed = MathUtils.sin(theta) * 4;
-		float dx = getX() - targetX;
-		float dy = getY() - targetY;
-		if (dx * dx + dy * dy < 100) {
-			dead = true;
-		}
-
+		xSpeed = MathUtils.cos(theta) * 3;
+		ySpeed = MathUtils.sin(theta) * 3;
 		super.act(delta);
 	}
 
@@ -49,9 +43,8 @@ public class Fireball extends GameObject {
 
 	public void collideBlock(Block block) {
 		if (bounds.overlaps(block.bounds) && block.isCreated()) {
-			block.setDead();
+			block.setDead(true);
 			dead = true;
-
 		}
 	}
 

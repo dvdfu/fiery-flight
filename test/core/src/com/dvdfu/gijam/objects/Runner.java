@@ -39,8 +39,8 @@ public class Runner extends GameObject {
 
 	public void collideBlock(Block block) {
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(block.bounds)) {
-			block.setDead();
+		if (bounds.overlaps(block.bounds) && block.isCreated()) {
+			block.setDead(true);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class Runner extends GameObject {
 	}
 
 	public void move() {
-		if (gameTime == 1800) {
+		if (gameTime == 100) {
 			minX = 600;
 			maxX = Consts.ScreenWidth - 200;
 		}
