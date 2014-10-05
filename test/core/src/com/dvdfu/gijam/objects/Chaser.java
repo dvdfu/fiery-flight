@@ -14,6 +14,10 @@ public class Chaser extends GameObject {
 	private int jumpsMax = 2;
 	private int jumpsLeft = jumpsMax;
 	private float jumpSpeed = 7;
+	private int currentPowerUp;
+	private int powerUpCounter;
+	private float extraSpeed;
+	private int extraJump;
 
 	public Chaser(GameStage stage) {
 		super(stage);
@@ -49,6 +53,15 @@ public class Chaser extends GameObject {
 		setBounds();
 	}
 
+	public void collidePowerUp(PowerUp powerUp) {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(powerUp.bounds)) {
+			currentPowerUp = powerUp.type;
+			powerUpCounter = 300;
+			powerUp.setDead();
+		}
+	}
+
 	public void draw(Batch batch, float parentAlpha) {
 		batch.setColor(1, 1, 1, 1);
 		super.draw(batch, parentAlpha);
@@ -74,21 +87,29 @@ public class Chaser extends GameObject {
 
 	public void move() {
 		ySpeed -= Consts.Gravity;
-		if (Input.KeyPressed(Input.Z)) {
-			if (grounded) {
-				ySpeed = jumpSpeed;
-
-			} else if (jumpsLeft > 0) {
-				ySpeed = jumpSpeed;
-				jumpsLeft--;
+		
+		if (currentPowerUp != 0) {
+			if (powerUpCounter == 0) {
+				currentPowerUp = 0;
+				extraSpeed = 0f;
+				extraJump = 0;
+			} else {
+				powerUpCounter--;
+			}
+			if (currentPowerUp == 1) {
+				extraSpeed = 3f;
+			}
+			else if (currentPowerUp == 2) {
+				extraJump = 3;
 			}
 		}
-		groundedBuffer = false;
 
 		if (Input.KeyPressed(Input.ARROW_UP) && jumpsLeft > 0) {
-			ySpeed = jumpSpeed;
+			ySpeed = jumpSpeed + extraJump;
 			jumpsLeft--;
 		}
+		grounded = getY() <= 0;
+		groundedBuffer = false;
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (xSpeed < moveMax) {
