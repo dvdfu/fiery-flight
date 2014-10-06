@@ -120,7 +120,7 @@ public class GameScreen extends AbstractScreen {
 	public void render(float delta) {
 		if (deadTimer == 0) {
 			if (fireballCounter > 0) {
-				// fireballCounter--;
+				fireballCounter--;
 			} else {
 				Fireball fireball = pool.getFireball();
 				fireball.setPosition(runner.getCX(), runner.getCY());
