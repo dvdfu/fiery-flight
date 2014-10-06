@@ -85,7 +85,9 @@ public class Chaser extends GameObject {
 
 	public void collideFireball(Fireball fireball) {
 		if (bounds.overlaps(fireball.bounds)) {
-			dead = true;
+			//dead = true;
+			xSpeed = fireball.getXSpeed();
+			ySpeed = fireball.getYSpeed();
 		}
 	}
 
@@ -96,11 +98,15 @@ public class Chaser extends GameObject {
 
 	public void act(float delta) {
 		setX(getX() - Consts.ScreenSpeed);
+		if (getTop() > Consts.ScreenHeight) {
+			setY(Consts.ScreenHeight - getHeight());
+			ySpeed = 0;
+		}
 		super.act(delta);
 	}
 
 	public boolean isDead() {
-		return getTop() < 0 || dead;
+		return getTop() < 0 || dead || getRight() < 0;
 	}
 
 	public void update() {

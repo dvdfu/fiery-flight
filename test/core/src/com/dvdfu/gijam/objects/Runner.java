@@ -57,7 +57,7 @@ public class Runner extends GameObject {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		batch.setColor(1, 1, 1, 1);
+		batch.setColor(0, 1, 0, 1);
 		super.draw(batch, parentAlpha);
 	}
 

@@ -86,23 +86,14 @@ public class GameScreen extends AbstractScreen {
 		gauges = new Group();
 		stage.addActor(gauges);
 
-		chasergauge = new Gauge(stage);
-		boxgauge = new Gauge(stage);
+		randomblocks = new Group();
+		stage.addActor(randomblocks);
 
-		chasergauge.setPosition(10, Consts.ScreenHeight / 2);
-		boxgauge.setPosition(Consts.ScreenWidth - 40, Consts.ScreenHeight / 2);
-
-		gauges.addActor(chasergauge);
-		gauges.addActor(boxgauge);
-
-		Block newBlock = pool.getBlock();
+		RandomBlock newBlock = pool.getRandomBlock();
 		newBlock.setSize(500, 200);
 		newBlock.setY(-40);
 		newBlock.createBlock();
-		blocks.addActor(newBlock);
-
-		randomblocks = new Group();
-		stage.addActor(randomblocks);
+		randomblocks.addActor(newBlock);
 
 		powerUps = new Group();
 		stage.addActor(powerUps);
@@ -112,6 +103,15 @@ public class GameScreen extends AbstractScreen {
 
 		fireballs = new Group();
 		stage.addActor(fireballs);
+
+		chasergauge = new Gauge(stage);
+		boxgauge = new Gauge(stage);
+
+		chasergauge.setPosition(10, Consts.ScreenHeight / 2);
+		boxgauge.setPosition(Consts.ScreenWidth - 40, Consts.ScreenHeight / 2);
+
+		gauges.addActor(chasergauge);
+		gauges.addActor(boxgauge);
 
 		stage.setCamPosition(Gdx.graphics.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2);
